@@ -1,0 +1,19 @@
+# ignore python cache
+__pycache__/
+
+# ignore ALL random files
+*.txt
+*.mp3
+
+# ignore the enviroment variables
+.env
+
+# Ignores the big assets to improve upload and download speed
+assets/gameplay/*
+assets/music/*
+
+# ignores program output
+out/*
+
+# ignores temporary files
+temp/*
