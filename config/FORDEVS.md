@@ -14,7 +14,8 @@ You can find the official API page on this **[website](https://www.reddit.com/pr
 2.  praw - Reddit Scraper
 3.  pyttsx3 - Speech Synthesizer 1
 4.  gTTS - Speech Synthesizer 2
-5.  moviepy - Video Editor
+5.  elevenlabs - Speech Synthesizer 3
+6.  moviepy - Video Editor
 
 Install Command
 `pip install python-dotenv praw pyttsx3 gTTS moviepy`
