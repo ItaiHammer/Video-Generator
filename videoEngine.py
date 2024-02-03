@@ -96,7 +96,7 @@ class VideoGenerator:
         video = CompositeVideoClip([gameplay, introBanner])
 
         if (music):
-            music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.1).subclip(voiceover.duration)
+            music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.1).subclip(0, voiceover.duration)
             video.audio = CompositeAudioClip([voiceover, music])
         else:
             video.audio = voiceover
