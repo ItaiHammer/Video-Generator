@@ -34,7 +34,7 @@ def cutString(text, characterPerRow, maxRowCount):
 
 def numberCap(number, cap):
     if (number >= cap):
-        number = cap-1
+        number = f"{cap - 1}+"
     return number
 
 
@@ -79,7 +79,7 @@ class AssetManager:
         titleText = cutString(redditPost['title'], 23, 3)
         title = TextClip(titleText, fontsize = (28 + 15/(len(titleText.split('\n')) * 4)), font="Calibri-Bold", align="West", color = 'black').set_position((25, 45 + 90/len(titleText.split('\n'))))
 
-        score = TextClip(f"{numberCap(redditPost['score'], 1000)}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((65, 163))
+        score = TextClip(f"{numberCap(redditPost['score'], 100)}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((65, 163))
 
         commentCount = TextClip(f"{numberCap(redditPost['commentCount'], 1000)}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((139, 163))
 
@@ -96,7 +96,11 @@ class VideoGenerator:
         video = CompositeVideoClip([gameplay, introBanner])
 
         if (music):
-            music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.1).subclip(0, voiceover.duration)
+            music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)
+
+            if (music.duration > voiceover.duration):
+                music = music.subclip(0, voiceover.duration)
+
             video.audio = CompositeAudioClip([voiceover, music])
         else:
             video.audio = voiceover
