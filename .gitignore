@@ -10,10 +10,14 @@ __pycache__/
 
 # Ignores the big assets to improve upload and download speed
 assets/gameplay/*
+!assets/gameplay/.gitkeep
 assets/music/*
+!assets/music/.gitkeep
 
 # ignores program output
 out/*
+!out/.gitkeep
 
 # ignores temporary files
 temp/*
+!out/.gitkeep
