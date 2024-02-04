@@ -18,4 +18,4 @@ You can find the official API page on this **[website](https://www.reddit.com/pr
 6.  moviepy - Video Editor
 
 Install Command
-`pip install python-dotenv praw pyttsx3 gTTS moviepy`
+`pip install python-dotenv praw pyttsx3 gTTS moviepy nltk`

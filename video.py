@@ -32,6 +32,5 @@ class Video:
 
     def createRedditVideo(self, redditPost, data):
         banner = AssetManager.createRedditBanner(redditPost)
-        # captions = AssetManager.createRedditCaptions(redditPost)
         
-        VideoGenerator.createRedditVideo(self.path, banner, data['music'])
+        VideoGenerator.createRedditVideo(self.path, banner, data['music'], redditPost)
