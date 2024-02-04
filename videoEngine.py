@@ -32,10 +32,13 @@ def cutString(text, characterPerRow, maxRowCount):
     
     return output
 
-def numberCap(number, cap):
-    if (number >= cap):
-        number = f"{cap - 1}+"
-    return number
+def numberShortner(number):
+    if (number >= 1000000):
+        return f"{int(number/1000000)}M+"
+    if (number >= 1000):
+        return f"{int(number/1000)}K+"
+    else:
+        return number
 
 
 class AssetManager:
@@ -79,9 +82,9 @@ class AssetManager:
         titleText = cutString(redditPost['title'], 23, 3)
         title = TextClip(titleText, fontsize = (28 + 15/(len(titleText.split('\n')) * 4)), font="Calibri-Bold", align="West", color = 'black').set_position((25, 45 + 90/len(titleText.split('\n'))))
 
-        score = TextClip(f"{numberCap(redditPost['score'], 100)}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((65, 163))
+        score = TextClip(f"{numberShortner(redditPost['score'])}", fontsize = 20, font="Amiri-bold", color = '#404040').set_position((65, 163))
 
-        commentCount = TextClip(f"{numberCap(redditPost['commentCount'], 1000)}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((139, 163))
+        commentCount = TextClip(f"{numberShortner(redditPost['commentCount'])}", fontsize = 20, font="Amiri-bold", color = '#404040').set_position((147, 163))
 
         return CompositeVideoClip([templateBanner, pfp, name, title, score, commentCount])        
 
