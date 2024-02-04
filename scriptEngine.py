@@ -12,7 +12,7 @@ from collections import Counter
 from dotenv import load_dotenv
 
 # ENV and praw setup
-load_dotenv()
+load_dotenv(encoding="utf-16")
 
 reddit = praw.Reddit(
     client_secret=os.getenv("SECRET_KEY"),
@@ -25,7 +25,7 @@ reddit.read_only = True
 # Constants
 MIN_WORDS_PER_POST = 35
 MAX_WORDS_PER_POST = 160
-NUMBER_OF_POSTS_TO_CHECK = 10000
+NUMBER_OF_POSTS_TO_CHECK = 10
 
 topic_related_words = [
     "advice",
@@ -98,9 +98,11 @@ def Get_List_Of_Good_Posts(numCycles): # numCycles should start as 1!
 
     # The repetition part in case not enough were found.
     if numberOfGoodPosts < 10:
-        if numCycles > 3:
+        if numCycles > 5:
+            if numberOfGoodPosts >= 1:
+                return listOfGoodPosts
             return "There are not any good posts :<()"
-        Get_List_Of_Good_Posts(numCycles+0.5)
+        return Get_List_Of_Good_Posts(numCycles+2)
 
     # sort all good posts by the amount of 
     # sorted_posts = sorted(listOfGoodPosts, key=lambda x: x.score, reverse=True)
@@ -142,9 +144,17 @@ def GenerateTags(post):
 
     # Generates the full captions for the video
     finalCaptions = f"{post['title']} \n Like ->\n Share ->\n Follow ->\n Comment ->\n \n \n {' '.join(tagsWithSolamit)}"
-    print(finalCaptions)
 
     return tags
+
+def fixUpScript(script):
+    newScript = script
+    # change AITA to am I the asshole (popular shortcut)
+    newScript = newScript.replace("AITA", "am I the asshole")
+
+    return newScript
+
+    
 
 
 # method that searches for posts and writes a post's script into a file
@@ -176,19 +186,23 @@ def makeRedditScript(path, subredditName):
     #         print(post.selftext)
     #         # for comment in post.comments[:2]: # first couple of comments
     #         #     print(comment.body)
+
+    script = fixUpScript(f"{post.title}... {post.selftext}. Like and Share for more!")
+
     out = {
-        'script': post.selftext,
+        'script': script,
         'title': post.title,
         'score': post.score,
         'subreddit': subredditName,
         'commentCount': len(post.comments),
         'url': post.url,
     }
+
     tagList = GenerateTags(out)
+
+    out['tags'] = tagList
 
     file.write(post.selftext)
     file.close()
-
-    out["tags"] = tagList
     
     return out
