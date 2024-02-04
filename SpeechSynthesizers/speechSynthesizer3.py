@@ -3,7 +3,7 @@ from elevenlabs import set_api_key, generate, save
 from dotenv import load_dotenv
 
 # ENV and praw setup
-load_dotenv(encoding="utf-16")
+load_dotenv()
 
 class SpeechSynthesizer:
     def __init__(self):

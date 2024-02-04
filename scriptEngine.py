@@ -2,10 +2,17 @@ import sys
 import os
 import praw
 import random
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from collections import Counter
 from dotenv import load_dotenv
 
 # ENV and praw setup
-load_dotenv(encoding="utf-16")
+load_dotenv()
 
 reddit = praw.Reddit(
     client_secret=os.getenv("SECRET_KEY"),
@@ -19,6 +26,43 @@ reddit.read_only = True
 MIN_WORDS_PER_POST = 35
 MAX_WORDS_PER_POST = 160
 NUMBER_OF_POSTS_TO_CHECK = 10000
+
+topic_related_words = [
+    "advice",
+    "reddit",
+    "stories",
+    "life",
+    "love",
+    "tips",
+    "help",
+    "community",
+    "experience",
+    "support",
+    "wisdom",
+    "guidance",
+    "suggestions",
+    "counsel",
+    "recommendations",
+    "insights",
+    "sharing",
+    "lessons",
+    "knowledge",
+    "feedback",
+    "LoveLife",
+    "WiseWords",
+    "StoryTime",
+    "LifeHacks",
+    "HeartfeltHelp",
+    "ExperienceExchange",
+    "LoveWisdom",
+    "CommunityConnections",
+    "reddit",
+    "redditAdvice",
+    "redditStories",
+    "redditLove",
+    "redditTips",
+    "redditCommunity",
+]
 
 
 # Methods
@@ -63,6 +107,46 @@ def Get_List_Of_Good_Posts(numCycles): # numCycles should start as 1!
 
     return listOfGoodPosts
 
+
+def GenerateTags(post):
+    script = post["script"]
+
+    tokens = word_tokenize(script.lower())
+    # Remove stopwords like a, the, and
+    stop_words = set(stopwords.words('english'))
+    filtered_tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
+    # Part-of-Speech Tagging
+    nltk.pos_tag(filtered_tokens)
+
+    # Frequency Analysis - counts the most frequent words
+    word_freq = Counter(filtered_tokens)
+    # Select top keywords
+    tags = [word for word, _ in word_freq.most_common(10)]
+
+    # Tokenize the title - also get words from the title
+    title = post["subreddit"]
+    title_tokens = word_tokenize(title.lower())
+    # Tokenization of the script
+    tokens = word_tokenize(script.lower())
+    # Remove stopwords from title and script tokens
+    stop_words = set(stopwords.words('english'))
+    filtered_title_tokens = [word for word in title_tokens if word.isalnum() and word not in stop_words]
+
+    # adds all tags togther
+    tags = tags + filtered_title_tokens + topic_related_words
+    tags.append(post["subreddit"]) # make a premade list of common tags for the specific subreddit!
+    # checks for duplicates
+    tags = list(set(tags))
+    # adds the # symbol everywhere
+    tagsWithSolamit = ["#" + word for word in tags]
+
+    # Generates the full captions for the video
+    finalCaptions = f"{post['title']} \n Like ->\n Share ->\n Follow ->\n Comment ->\n \n \n {' '.join(tagsWithSolamit)}"
+    print(finalCaptions)
+
+    return tags
+
+
 # method that searches for posts and writes a post's script into a file
 def makeRedditScript(path, subredditName):
     file = open(f"{path}/script.txt", 'a')
@@ -92,10 +176,6 @@ def makeRedditScript(path, subredditName):
     #         print(post.selftext)
     #         # for comment in post.comments[:2]: # first couple of comments
     #         #     print(comment.body)
-
-    file.write(post.selftext)
-    file.close()
-
     out = {
         'script': post.selftext,
         'title': post.title,
@@ -104,5 +184,11 @@ def makeRedditScript(path, subredditName):
         'commentCount': len(post.comments),
         'url': post.url,
     }
+    tagList = GenerateTags(out)
+
+    file.write(post.selftext)
+    file.close()
+
+    out["tags"] = tagList
     
     return out
