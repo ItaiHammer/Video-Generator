@@ -13,7 +13,7 @@ from collections import Counter
 from dotenv import load_dotenv
 
 # ENV and praw setup
-load_dotenv(encoding="utf-16")
+load_dotenv()
 
 reddit = praw.Reddit(
     client_secret=os.getenv("SECRET_KEY"),
@@ -146,11 +146,19 @@ def GenerateTags(post):
     tagsWithSolamit = ["#" + word for word in tags]
 
     # Generates the full captions for the video
-    finalCaptions = f"{post['title']} \n Like ->\n Share ->\n Follow ->\n Comment ->\n \n \n {' '.join(tagsWithSolamit)}"
-    print(finalCaptions)
+    finalCaptions = f"{post['title']} \n Like ->\n Share ->\n Follow ->\n Comment ->\n \n \n{' '.join(tagsWithSolamit)}"
 
-    return tags
+    return finalCaptions
 
+def checkScript(script):
+    # # remove links
+    script = script.replace("\n", ". ")
+    script = script.replace(". . .", ". ")
+    script = script.replace(".. .", ". ")
+    script = script.replace("..", ". ")
+    script = script.replace("\n", " ")
+    script = script.replace("AITA", "am I the asshole")
+    return script
 
 # method that searches for posts and writes a post's script into a file
 def makeRedditScript(path, subredditName):
@@ -181,8 +189,10 @@ def makeRedditScript(path, subredditName):
     #         print(post.selftext)
     #         # for comment in post.comments[:2]: # first couple of comments
     #         #     print(comment.body)
+    newScript = f"{post.title}. {post.selftext}. Like and Share for more!"
+    newScript = checkScript(newScript)
     out = {
-        'script': post.selftext,
+        'script': newScript,
         'title': post.title,
         'score': post.score,
         'subreddit': subredditName,
@@ -191,7 +201,6 @@ def makeRedditScript(path, subredditName):
     }
 
     tagList = GenerateTags(out)
-
     out['tags'] = tagList
 
     file.write(newScript)

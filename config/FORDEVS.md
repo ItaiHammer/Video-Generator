@@ -20,3 +20,5 @@ You can find the official API page on this **[website](https://www.reddit.com/pr
 
 Install Command
 `pip install python-dotenv praw pyttsx3 gTTS moviepy nltk`
+
+When running, make sure the load_env has or does't have "utf-16" for the program to work in all instances!
