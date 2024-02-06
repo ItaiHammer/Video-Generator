@@ -1,6 +1,7 @@
 import os
 from random import randint, uniform
-from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, TextClip, CompositeVideoClip, CompositeAudioClip, vfx, afx, concatenate_videoclips
+# from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, TextClip, CompositeVideoClip, CompositeAudioClip, vfx, afx, concatenate_videoclips
+from moviepy.editor import *
 from audioEngine import Music
 
 assetsDir = f"./assets/"
@@ -97,11 +98,13 @@ class AssetManager:
         duration_per_caption = voiceover_duration / word_count
 
         for i, word in enumerate(words_list):
+            if word == '':
+                continue
             text_clip = TextClip(word, font=font, fontsize=fontsize, color=color, bg_color=bg_color)
             text_clips.append(text_clip.set_duration(duration_per_caption))
         
         # Concatenate all TextClips into a single VideoClip
-        final_clip = concatenate_videoclips(text_clips, method="compose")
+        final_clip = concatenate_videoclips(text_clips, method="compose").set_pos(("center","center"))
         
         return final_clip
     
@@ -113,8 +116,8 @@ class VideoGenerator:
         gameplay = AssetManager.chooseRandomSubclip(voiceover.duration+ 1, VideoFileClip(f"{gameplayDir}{AssetManager.getRandomGameplay().name}")).fx(vfx.fadein, introDuration)
         
         captions = AssetManager.createRedditCaptions(redditPost, voiceover.duration)
-
-        video = CompositeVideoClip([gameplay, introBanner, captions])
+        # captions = TextClip("text", font ="Arial-Bold", fontsize = 70, color ="black").set_duration(introDuration+1).set_pos(("center","center"))
+        video = CompositeVideoClip([gameplay, captions, introBanner])
 
         if (music):
             music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)

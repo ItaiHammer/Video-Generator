@@ -2,6 +2,7 @@ import sys
 import os
 import praw
 import random
+import re
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -25,10 +26,12 @@ reddit.read_only = True
 # Constants
 MIN_WORDS_PER_POST = 35
 MAX_WORDS_PER_POST = 160
-NUMBER_OF_POSTS_TO_CHECK = 10000
+NUMBER_OF_POSTS_TO_CHECK = 10
 
 topic_related_words = [
     "advice",
+    "foru",
+    "foryou",
     "reddit",
     "stories",
     "life",
@@ -98,9 +101,11 @@ def Get_List_Of_Good_Posts(numCycles): # numCycles should start as 1!
 
     # The repetition part in case not enough were found.
     if numberOfGoodPosts < 10:
-        if numCycles > 3:
+        if numCycles > 5:
+            if numberOfGoodPosts >= 1:
+                return listOfGoodPosts
             return "There are not any good posts :<()"
-        Get_List_Of_Good_Posts(numCycles+0.5)
+        return Get_List_Of_Good_Posts(numCycles+2)
 
     # sort all good posts by the amount of 
     # sorted_posts = sorted(listOfGoodPosts, key=lambda x: x.score, reverse=True)
@@ -141,15 +146,22 @@ def GenerateTags(post):
     tagsWithSolamit = ["#" + word for word in tags]
 
     # Generates the full captions for the video
-    finalCaptions = f"{post['title']} \n Like ->\n Share ->\n Follow ->\n Comment ->\n \n \n {' '.join(tagsWithSolamit)}"
-    print(finalCaptions)
+    finalCaptions = f"{post['title']} \n Like ->\n Share ->\n Follow ->\n Comment ->\n \n \n{' '.join(tagsWithSolamit)}"
 
-    return tags
+    return finalCaptions
 
+def checkScript(script):
+    # # remove links
+    script = script.replace("\n", ". ")
+    script = script.replace(". . .", ". ")
+    script = script.replace(".. .", ". ")
+    script = script.replace("..", ". ")
+    script = script.replace("\n", " ")
+    return script
 
 # method that searches for posts and writes a post's script into a file
 def makeRedditScript(path, subredditName):
-    file = open(f"{path}/script.txt", 'a')
+    file = open(f"{path}/script.txt", 'a', encoding='utf-8')
     global subreddit
     subreddit = reddit.subreddit(subredditName)
 
@@ -176,8 +188,10 @@ def makeRedditScript(path, subredditName):
     #         print(post.selftext)
     #         # for comment in post.comments[:2]: # first couple of comments
     #         #     print(comment.body)
+    newScript = f"{post.title}. {post.selftext}. Like and Share for more!"
+    newScript = checkScript(newScript)
     out = {
-        'script': post.selftext,
+        'script': newScript,
         'title': post.title,
         'score': post.score,
         'subreddit': subredditName,
@@ -186,7 +200,7 @@ def makeRedditScript(path, subredditName):
     }
     tagList = GenerateTags(out)
 
-    file.write(post.selftext)
+    file.write(newScript)
     file.close()
 
     out["tags"] = tagList
