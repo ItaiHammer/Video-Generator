@@ -16,6 +16,7 @@ You can find the official API page on this **[website](https://www.reddit.com/pr
 4.  gTTS - Speech Synthesizer 2
 5.  elevenlabs - Speech Synthesizer 3
 6.  moviepy - Video Editor
+7.  nltk - The Natural Language Toolkit
 
 Install Command
 `pip install python-dotenv praw pyttsx3 gTTS moviepy nltk`

@@ -1,7 +1,6 @@
 import os
 from random import randint, uniform
-# from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, TextClip, CompositeVideoClip, CompositeAudioClip, vfx, afx, concatenate_videoclips
-from moviepy.editor import *
+from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, TextClip, CompositeVideoClip, CompositeAudioClip, concatenate_audioclips, vfx, afx
 from audioEngine import Music
 
 assetsDir = f"./assets/"
@@ -33,10 +32,13 @@ def cutString(text, characterPerRow, maxRowCount):
     
     return output
 
-def numberCap(number, cap):
-    if (number >= cap):
-        number = f"{cap - 1}+"
-    return number
+def numberShortner(number):
+    if (number >= 1000000):
+        return f"{int(number/1000000)}M+"
+    if (number >= 1000):
+        return f"{int(number/1000)}K+"
+    else:
+        return number
 
 
 class AssetManager:
@@ -80,9 +82,9 @@ class AssetManager:
         titleText = cutString(redditPost['title'], 23, 3)
         title = TextClip(titleText, fontsize = (28 + 15/(len(titleText.split('\n')) * 4)), font="Calibri-Bold", align="West", color = 'black').set_position((25, 45 + 90/len(titleText.split('\n'))))
 
-        score = TextClip(f"{numberCap(redditPost['score'], 100)}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((65, 163))
+        score = TextClip(f"{numberShortner(redditPost['score'])}", fontsize = 20, font="Amiri-bold", color = '#404040').set_position((65, 163))
 
-        commentCount = TextClip(f"{numberCap(redditPost['commentCount'], 1000)}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((139, 163))
+        commentCount = TextClip(f"{numberShortner(redditPost['commentCount'])}", fontsize = 20, font="Amiri-bold", color = '#404040').set_position((147, 163))
 
         return CompositeVideoClip([templateBanner, pfp, name, title, score, commentCount])    
         
@@ -98,32 +100,33 @@ class AssetManager:
         duration_per_caption = voiceover_duration / word_count
 
         for i, word in enumerate(words_list):
-            if word == '':
-                continue
             text_clip = TextClip(word, font=font, fontsize=fontsize, color=color, bg_color=bg_color)
             text_clips.append(text_clip.set_duration(duration_per_caption))
         
         # Concatenate all TextClips into a single VideoClip
-        final_clip = concatenate_videoclips(text_clips, method="compose").set_pos(("center","center"))
+        final_clip = concatenate_videoclips(text_clips, method="compose")
         
         return final_clip
     
 class VideoGenerator:
-    def createRedditVideo(path: str, banner, music, redditPost):
+    def createRedditVideo(path: str, banner, music):
         introDuration = 4
         introBanner = banner.set_duration(introDuration+1).set_pos(("center","center"))
         voiceover = AudioFileClip(f"{path}/voiceover.mp3")
         gameplay = AssetManager.chooseRandomSubclip(voiceover.duration+ 1, VideoFileClip(f"{gameplayDir}{AssetManager.getRandomGameplay().name}")).fx(vfx.fadein, introDuration)
         
         captions = AssetManager.createRedditCaptions(redditPost, voiceover.duration)
-        # captions = TextClip("text", font ="Arial-Bold", fontsize = 70, color ="black").set_duration(introDuration+1).set_pos(("center","center"))
-        video = CompositeVideoClip([gameplay, captions, introBanner])
+
+        video = CompositeVideoClip([gameplay, introBanner, captions])
 
         if (music):
             music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)
 
-            if (music.duration > voiceover.duration):
-                music = music.subclip(0, voiceover.duration)
+            # 
+            while (music.duration < voiceover.duration):
+                music = concatenate_audioclips([music, music])
+
+            music = music.subclip(0, voiceover.duration)
 
             video.audio = CompositeAudioClip([voiceover, music])
         else:
