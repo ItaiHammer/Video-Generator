@@ -161,8 +161,8 @@ def checkScript(script):
     return script
 
 # method that searches for posts and writes a post's script into a file
-def makeRedditScript(path, subredditName):
-    file = open(f"{path}/script.txt", 'a', encoding='utf-8')
+def makeRedditScript(subredditName, numPostsWanted):
+    # file = open(f"{path}/script.txt", 'a', encoding='utf-8')
     global subreddit
     subreddit = reddit.subreddit(subredditName)
 
@@ -177,33 +177,37 @@ def makeRedditScript(path, subredditName):
 
     # 1 represents the first iteration.
     sorted_posts = Get_List_Of_Good_Posts(1)
-    post = random.choice(sorted_posts)
-    # if type(sorted_posts) == "<class 'str'>":
-    #     print(sorted_posts)
-    # else:
-    #     for post in sorted_posts[:2]:
-    #         print("\n")
-    #         print("Title -", post.title)
-    #         print("URL -", post.url)
-    #         print("Score -", post.score)
-    #         print(post.selftext)
-    #         # for comment in post.comments[:2]: # first couple of comments
-    #         #     print(comment.body)
-    newScript = f"{post.title}. {post.selftext}. Like and Share for more!"
-    newScript = checkScript(newScript)
-    out = {
-        'script': newScript,
-        'title': post.title,
-        'score': post.score,
-        'subreddit': subredditName,
-        'commentCount': len(post.comments),
-        'url': post.url,
-    }
+    returningPosts = []
+    for i in range (numPostsWanted):
+        if i > len(sorted_posts):
+            break
 
-    tagList = GenerateTags(out)
-    out['tags'] = tagList
+        post = random.choice(sorted_posts)
+        # if type(sorted_posts) == "<class 'str'>":
+        #     print(sorted_posts)
+        # else:
+        #     for post in sorted_posts[:2]:
+        #         print("\n")
+        #         print("Title -", post.title)
+        #         print("URL -", post.url)
+        #         print("Score -", post.score)
+        #         print(post.selftext)
+        #         # for comment in post.comments[:2]: # first couple of comments
+        #         #     print(comment.body)
+        newScript = f"{post.title}. {post.selftext}. Like and Share for more!"
+        newScript = checkScript(newScript)
+        out = {
+            'script': newScript,
+            'title': post.title,
+            'score': post.score,
+            'subreddit': subredditName,
+            'commentCount': len(post.comments),
+            'url': post.url,
+        }
 
-    file.write(newScript)
-    file.close()
-    
-    return out
+        tagList = GenerateTags(out)
+        out['tags'] = tagList
+        returningPosts.append(out)
+        # file.write(newScript)
+        # file.close()
+    return returningPosts

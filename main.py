@@ -15,14 +15,17 @@ def run():
 
         if command[1] == None: command[2] = "video"
         if command[2] == None: command[2] = "shortStories"
-        
+        # Convert command[5] to integer before assigning
+        number_videos = int(command[4]) if command[4] is not None else 1
+
         name = command[1]
 
         data = {
             'type': 'reddit',
             'subreddit': command[2],
             'music': command[3] == 'y' or command[3] == 'yes',
-            'captions': command[4] == 'y' or command[4] == 'yes'
+            'captions': command[4] == 'y' or command[4] == 'yes',
+            'numberVideos': number_videos
         }
         
         createRedditVideo(name, data)

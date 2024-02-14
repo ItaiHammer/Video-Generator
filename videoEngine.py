@@ -88,7 +88,7 @@ class AssetManager:
 
         return CompositeVideoClip([templateBanner, pfp, name, title, score, commentCount])    
         
-    def createRedditCaptions(script, voiceover_duration=0.3, fps=30, font='Arial', fontsize=30, color='white', bg_color='black'):
+    def createRedditCaptions(script, voiceover_duration=0.3, fps=30, font='Times New Roman', fontsize=45, color='white', stroke_color='black'):
         # Initialize a list to store TextClips
         text_clips = []
         
@@ -102,7 +102,7 @@ class AssetManager:
         for i, word in enumerate(words_list):
             # if word == '': # sometimes it splits with ""
             #     continue
-            text_clip = TextClip(word, font=font, fontsize=fontsize, color=color, bg_color=bg_color)
+            text_clip = TextClip(word, font=font, fontsize=fontsize, color=color, stroke_color=stroke_color, stroke_width=2)
             text_clips.append(text_clip.set_duration(duration_per_caption))
         
         # Concatenate all TextClips into a single VideoClip
