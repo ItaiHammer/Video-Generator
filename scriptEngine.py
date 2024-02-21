@@ -11,6 +11,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from collections import Counter
 from dotenv import load_dotenv
+from chatGPTassist import checkStory
 
 # ENV and praw setup
 load_dotenv()
@@ -24,8 +25,8 @@ reddit = praw.Reddit(
 reddit.read_only = True
 
 # Constants
-MIN_WORDS_PER_POST = 35
-MAX_WORDS_PER_POST = 160
+MIN_WORDS_PER_POST = 120
+MAX_WORDS_PER_POST = 1600
 NUMBER_OF_POSTS_TO_CHECK = 10
 
 topic_related_words = [
@@ -151,14 +152,15 @@ def GenerateTags(post):
     return finalCaptions
 
 def checkScript(script):
+    theScript = checkStory(script)
     # # remove links
-    script = script.replace("\n", ". ")
-    script = script.replace(". . .", ". ")
-    script = script.replace(".. .", ". ")
-    script = script.replace("..", ". ")
-    script = script.replace("\n", " ")
-    script = script.replace("AITA", "am I the asshole")
-    return script
+    # script = script.replace("\n", ". ")
+    # script = script.replace(". . .", ". ")
+    # script = script.replace(".. .", ". ")
+    # script = script.replace("..", ". ")
+    # script = script.replace("\n", " ")
+    # script = script.replace("AITA", "am I the asshole")
+    return theScript
 
 # method that searches for posts and writes a post's script into a file
 def makeRedditScript(subredditName, numPostsWanted):
@@ -177,6 +179,7 @@ def makeRedditScript(subredditName, numPostsWanted):
 
     # 1 represents the first iteration.
     sorted_posts = Get_List_Of_Good_Posts(1)
+    print("Found videos")
     returningPosts = []
     for i in range (numPostsWanted):
         if i > len(sorted_posts):
@@ -195,6 +198,7 @@ def makeRedditScript(subredditName, numPostsWanted):
         #         # for comment in post.comments[:2]: # first couple of comments
         #         #     print(comment.body)
         newScript = f"{post.title}. {post.selftext}. Like and Share for more!"
+        print(newScript)
         newScript = checkScript(newScript)
         out = {
             'script': newScript,

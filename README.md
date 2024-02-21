@@ -23,4 +23,8 @@ _For the low price of _[price]
 # the best way to upload:
 Make sure that you post at max 3-4 videos a day, each 3-4 hours apart so that they don't think you are a bot.
 Make sure that there are only 6 hashtags per video so you won't confuse the algorithm and that they are always the same to the niche.
+All videos should be over a minute to be monetized.
+Brighter videos tend to get more views.
+Never delete or private a video, it messes with the algorithm, instead keep uploading vids.
 Really supportive discord: https://discord.gg/nDjuz7vY 
+Really good youtube convertor to MP3: https://ytmp3.nu/eQLd/
