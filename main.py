@@ -1,9 +1,17 @@
 import os
+import json
 import shutil
-from projectManager import outDir, createRedditVideo
+from projectManager import outDir, createRedditVideo, createScriptedVideo
+
+def read_json_file(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    return data
 
 def run():
     print('Type your command below:')
+
+    # best starter is: createredditvideo advice advice y 1
 
     command = input().split(" ")
 
@@ -29,6 +37,19 @@ def run():
         }
         
         createRedditVideo(name, data)
+    elif command[0] == "scripts":
+        print("\033[32m going  over files \033[0m")
+        json_data = read_json_file("scripts.json")
+        name = command[1]
+        data = {
+            'type': 'border_security',
+            'subreddit': 'border_security',
+            'music': True,
+            'captions': True,
+            'data': json_data
+        }
+        
+        createScriptedVideo(name, data)
 
 
 def dump():

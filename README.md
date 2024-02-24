@@ -28,3 +28,5 @@ Brighter videos tend to get more views.
 Never delete or private a video, it messes with the algorithm, instead keep uploading vids.
 Really supportive discord: https://discord.gg/nDjuz7vY 
 Really good youtube convertor to MP3: https://ytmp3.nu/eQLd/
+gpt4all info at https://docs.gpt4all.io/gpt4all_python.html#managing-templates
+gpt4all folder thing:  "C:\Users\zivbe\.cache\gpt4all\mistral-7b-openorca.Q4_0.gguf2.gguf"

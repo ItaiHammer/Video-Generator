@@ -145,6 +145,41 @@ class AssetManager:
 #     return result
 
 class VideoGenerator:
+    def createScriptedVideo(path: str, music, redditPost):
+        
+        # Generate Everything
+        introDuration = 4
+        voiceover = AudioFileClip(f"{path}/voiceover.mp3")
+
+        # transcribe_gcs_with_word_time_offsets(f"{path}/voiceover.mp3")
+
+
+        gameplay = AssetManager.chooseRandomSubclip(voiceover.duration+ 1, VideoFileClip(f"{gameplayDir}{AssetManager.getRandomGameplay().name}")).fx(vfx.fadein, introDuration)
+        captions = AssetManager.createRedditCaptions(redditPost, voiceover.duration)
+
+        # Compose all togther
+        video = CompositeVideoClip([gameplay, captions]) # includes order of things on the screen, first is below everything else
+
+        # add music
+        if (music):
+            music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)
+
+            # music will be same duration as video
+            while (music.duration < voiceover.duration):
+                music = concatenate_audioclips([music, music])
+
+            music = music.subclip(0, voiceover.duration)
+
+            video.audio = CompositeAudioClip([voiceover, music])
+        else:
+            video.audio = voiceover
+
+        # write to file
+        video.write_videofile(f"{path}/video.mp4")
+
+        video.close()
+        # video.audio.close()
+
     def createRedditVideo(path: str, banner, music, redditPost):
         
         # Generate Everything

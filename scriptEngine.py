@@ -26,7 +26,7 @@ reddit.read_only = True
 
 # Constants
 MIN_WORDS_PER_POST = 120
-MAX_WORDS_PER_POST = 1600
+MAX_WORDS_PER_POST = 500
 NUMBER_OF_POSTS_TO_CHECK = 10
 
 topic_related_words = [
@@ -164,40 +164,20 @@ def checkScript(script):
 
 # method that searches for posts and writes a post's script into a file
 def makeRedditScript(subredditName, numPostsWanted):
-    # file = open(f"{path}/script.txt", 'a', encoding='utf-8')
     global subreddit
     subreddit = reddit.subreddit(subredditName)
 
-    # path: "./out/videoName/"
-    # Check if there's already a file for this subreddit
-    # subreddit_file_path = f"./assets//{subredditName}.json"
-    # if os.path.exists(subreddit_file_path):
-    #     # If the file exists, read the list of posts from it
-    #     with open(subreddit_file_path, 'r') as subreddit_file:
-    #         sorted_posts = json.load(subreddit_file)
-    # make sure u don't run this every time and just pick a random one out of the list we have.
-
     # 1 represents the first iteration.
     sorted_posts = Get_List_Of_Good_Posts(1)
-    print("Found videos")
+    print("\033[36m Found videos \033[0m")
     returningPosts = []
     for i in range (numPostsWanted):
         if i > len(sorted_posts):
             break
 
         post = random.choice(sorted_posts)
-        # if type(sorted_posts) == "<class 'str'>":
-        #     print(sorted_posts)
-        # else:
-        #     for post in sorted_posts[:2]:
-        #         print("\n")
-        #         print("Title -", post.title)
-        #         print("URL -", post.url)
-        #         print("Score -", post.score)
-        #         print(post.selftext)
-        #         # for comment in post.comments[:2]: # first couple of comments
-        #         #     print(comment.body)
         newScript = f"{post.title}. {post.selftext}. Like and Share for more!"
+        print(f"\n\n \033[31m printing the Script Before ChatGPT for video: {i+1} \033[0m")
         print(newScript)
         newScript = checkScript(newScript)
         out = {
@@ -212,6 +192,4 @@ def makeRedditScript(subredditName, numPostsWanted):
         tagList = GenerateTags(out)
         out['tags'] = tagList
         returningPosts.append(out)
-        # file.write(newScript)
-        # file.close()
     return returningPosts
