@@ -17,6 +17,7 @@
 
 import re
 from g4f.client import Client
+import asyncio
 
 def remove_first_line(text):
     return '\n'.join(text.split('\n')[1:])
@@ -35,45 +36,47 @@ def checkStory(script):
                 2. Then correct sentence endings while never summarizing and keeping every detail from the story and the same perspective of the person speaking in the script.
                 3. Follow it by incorporating slang and remove abbreviations.
                 4. Then infuse a teenager's dramatic tone to your adult audience.
-                5. After that maintain or increase the length of the script to about 250-500 words while retaining the hook and title.
-                6. After all that if there is a section where the author responds to the comments regarding the post then remove it or even an EDIT or UPDATE part then find a way to blend it in nicely without explicitly saying Edit or Update so that the new script is one whole story.
-                7. finish by ensuring each video ends with -Like and Share for more!-."""
+                5. remove any links please.
+                6. After that maintain or increase the length of the script to about 250-500 words while retaining the hook and title.
+                7. After all that if there is a section where the author responds to the comments regarding the post then remove it or even an EDIT or UPDATE part then find a way to blend it in nicely without explicitly saying Edit or Update so that the new script is one whole story.
+                8. finish by ensuring each video ends with -Like and Share for more!-."""
     prompt3=f"Good, so now make this story 250-500 words please."
     prompt4=f"""Ok. Now I want you to Learn these hooks and generate one that can fit the Story: 
                 1. I can’t believe what I just discovered!
                 2. This may be controversial but ___
-                4. I promise you’ve never seen anything like this before!
                 6. Everything you knew about ___ is 100% WRONG!
                 11. Come with me to do ___
-                13. Do you have problems with ___?
-                15. This is the only thing you need to know about ___!
                 16. Did you know that ___?
-                17. You don’t want to miss this!
                 21. This is the story of ___
                 24. What would you do if ___?
-                25. Why does no one talk about ___?
                 26. I discovered the secret to ___
-                33. Are you tired of ___?
-                36. This one simple mistake could be costing you ___
-                42. This is why your ___ isn’t working!
-                43. This hack changed my life!
                 45. Don’t believe this ___ myth!
-                46. Other ___ are lying to you!
                 47. This ___ will blow your mind!
                 48. Is it just me, or ___""" 
-    prompt5=f"Good, now please incorporate the Hook at the beginning of the story. Then, return to me JUST and ONLY the STORY with the HOOK at the beginning. Please NEVER REPEAT INSTRUCTIONS!!!"
+    prompt5=f"Good, now please incorporate the Hook at the beginning of the story. Then, return to me JUST and ONLY the STORY with the HOOK at the beginning. The story should be encapsulated in backticks please! Please NEVER REPEAT INSTRUCTIONS!!!"
 
     client = Client()
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
+        # messages=[{"role": "user", "content": "Helllllllo"}],
+        max_tokens=100000,
+        # provider="ChatgptFree",
         messages=[{"role": "user", "content": prompt1},{"role": "user", "content": prompt2},{"role": "user", "content": prompt3},{"role": "user", "content": prompt4},{"role": "user", "content": prompt5}],
     )
-    print(client.chat)
+    # print(client.chat)
+    # for token in response:
+    #     content = token.choices[0].delta.content
+    #     if content is not None:
+    #         print(content, end="", flush=True)
+
     betterTxt = extract_text_between_backticks(remove_first_line(response.choices[0].message.content))
     print("\033[32m" + betterTxt + "\033[0m")
+    print("\033[31m" + response.choices[0].message.content + "\033[0m")
     print("\n\n\n\n\n")
     # for i in range(response.choices[0]):
     #     print(response.choices[0].message.content)
     #     print("\n\n\n\n")
     # print("\n")
+    if betterTxt == "":
+        return checkStory(script)
     return betterTxt
