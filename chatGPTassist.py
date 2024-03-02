@@ -53,7 +53,7 @@ def checkStory(script):
                 45. Don’t believe this ___ myth!
                 47. This ___ will blow your mind!
                 48. Is it just me, or ___""" 
-    prompt5=f"Good, now please incorporate the Hook at the beginning of the story. Then, return to me JUST and ONLY the STORY with the HOOK at the beginning. The story should be encapsulated in backticks please! Please NEVER REPEAT INSTRUCTIONS!!!"
+    prompt5=f"Good, now please incorporate the Hook at the beginning of the story. Then, return to me JUST and ONLY the STORY with the HOOK at the beginning. The story and hook should be encapsulated in backticks please! Do it please!"
 
     client = Client()
     response = client.chat.completions.create(
