@@ -16,10 +16,9 @@
 #         return text
 
 import re
-from g4f.client import Client
-from g4f.Provider import RetryProvider, Phind, FreeChatgpt, Liaobots, Bing
-import g4f.debug
-g4f.debug.logging = True
+import requests
+# from g4f.client import Client
+# import asyncio
 
 def remove_first_line(text):
     return '\n'.join(text.split('\n')[1:])
@@ -55,37 +54,72 @@ def checkStory(script):
                 45. Don’t believe this ___ myth!
                 47. This ___ will blow your mind!
                 48. Is it just me, or ___""" 
-    # prompt5=f"Good, now please incorporate the Hook at the beginning of the story. Then, return to me JUST and ONLY the STORY with the HOOK at the beginning. The story and hook should be encapsulated in backticks please! Do it please!"
-    prompt5=f"Good, return to me JUST and ONLY the STORY encapsulated in backticks please! Do it please!"
+    prompt5=f"Good, now please incorporate the Hook at the beginning of the story. Then, return to me JUST and ONLY the STORY with the HOOK at the beginning. The story and hook should be encapsulated in backticks please! Do it please!"
 
-    client = Client(provider=RetryProvider([FreeChatgpt, Liaobots, Bing], shuffle=False))
-    response = client.chat.completions.create(
-        model="gpt-4-turbo",
-        # messages=[{"role": "user", "content": "Helllllllo"}],
-        max_tokens=100000,
-        # provider="ChatgptFree",
-        messages=[{"role": "user", "content": prompt1},{"role": "user", "content": prompt2},{"role": "user", "content": prompt3},{"role": "user", "content": prompt5}],
-    )
+    url = "https://cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com/v1/chat/completions"
 
-    betterTxt = extract_text_between_backticks(response.choices[0].message.content)
+    payload = {
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt1
+            },
+            {
+                "role": "user",
+                "content": prompt2
+            },
+            {
+                "role": "user",
+                "content": prompt3
+            },
+            {
+                "role": "user",
+                "content": prompt4
+            },
+            {
+                "role": "user",
+                "content": prompt5
+            }
+        ],
+        "model": "gpt-4-turbo-preview",
+        "max_tokens": 2000,
+        "temperature": 0.9
+    }
+    headers = {
+        "content-type": "application/json",
+        "X-RapidAPI-Key": "d4f80bf206mshad745c4db430d73p11b00ejsn4a47b5e25f1f",
+        "X-RapidAPI-Host": "cheapest-gpt-4-turbo-gpt-4-vision-chatgpt-openai-ai-api.p.rapidapi.com"
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+    print(response.json())
+    responseText = response.json()['choices'][0]['message']['content']
+
+
+    # client = Client()
+    # response = client.chat.completions.create(
+    #     model="gpt-3.5-turbo",
+    #     # messages=[{"role": "user", "content": "Helllllllo"}],
+    #     max_tokens=100000,
+    #     # provider="ChatgptFree",
+    #     messages=[{"role": "user", "content": prompt1},{"role": "user", "content": prompt2},{"role": "user", "content": prompt3},{"role": "user", "content": prompt4},{"role": "user", "content": prompt5}],
+    # )
+    # print(client.chat)
+    # for token in response:
+    #     content = token.choices[0].delta.content
+    #     if content is not None:
+    #         print(content, end="", flush=True)
+
+    betterTxt = extract_text_between_backticks(remove_first_line(responseText))
     print("\033[32m" + betterTxt + "\033[0m")
-    # print(remove_first_line(response.choices[0].message.content))
-    print("\033[31m" + response.choices[0].message.content + "\033[0m")
+    print("\033[31m" + responseText + "\033[0m")
+    # print(response.json())
     print("\n\n\n\n\n")
-
-    if betterTxt == "":
+    # for i in range(response.choices[0]):
+    #     print(response.choices[0].message.content)
+    #     print("\n\n\n\n")
+    # print("\n")
+    if len(betterTxt) == 0:
+        print("trying again!")
         return checkStory(script)
     return betterTxt
-
-
-
-# script = """A lost dog strays into a jungle. A lion sees this from a distance and says with caution "this guy looks edible, never seen his kind before".. So the lion starts rushing towards the dog with menace. The dog notices and starts to panic but as he's about to run he sees some bones next to him and gets an idea and says loudly "mmm...that was some good lion meat!".
-
-# The lion abruptly stops and says " woah! This guy seems tougher then he looks, I better leave while I can".
-
-# Over by the tree top, a monkey witnessed everything. Evidently, the monkey realizes the he can benefit from this situation by telling the lion and getting something in return. So the monkey proceeds to tell the lion what really happened and the lion says angrily "get on my back, we'll get him together".
-
-# So they start rushing back to the dog. The dog sees them and realized what happened and starts to panic even more. He then gets another idea and shouts "where the hell is that monkey! I told him to bring me another lion an hour ago..."
-
-# Edit: OMG my first gold! Thank you!. Like and Share for more!"""
-# checkStory(script)

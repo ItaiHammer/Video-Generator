@@ -26,7 +26,7 @@ reddit.read_only = True
 
 # Constants
 MIN_WORDS_PER_POST = 120
-MAX_WORDS_PER_POST = 500
+MAX_WORDS_PER_POST = 300
 NUMBER_OF_POSTS_TO_CHECK = 10
 
 topic_related_words = [
@@ -189,7 +189,7 @@ def makeRedditScript(subredditName, numPostsWanted):
             'url': post.url,
         }
 
-        tagList = GenerateTags(out)
-        out['tags'] = tagList
+        # tagList = GenerateTags(out)
+        # out['tags'] = tagList
         returningPosts.append(out)
     return returningPosts

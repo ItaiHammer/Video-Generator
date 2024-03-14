@@ -19,6 +19,6 @@ You can find the official API page on this **[website](https://www.reddit.com/pr
 7.  nltk - The Natural Language Toolkit
 
 Install Command
-`pip install python-dotenv praw pyttsx3 gTTS moviepy nltk g4f[all]`
+`pip install python-dotenv elevenlabs praw pyttsx3 gTTS moviepy nltk g4f[all]`
 
 When running, make sure the load_env has or does't have "utf-16" for the program to work in all instances!
