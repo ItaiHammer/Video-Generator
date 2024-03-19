@@ -22,7 +22,7 @@ import g4f.debug
 g4f.debug.logging = True
 
 def remove_first_line(text):
-    return '\n'.join(text.split('\n')[1:])
+    return '\n'.join(text.split('\n')[:-1])
 
 def extract_text_between_backticks(text):
     pattern = r'```([\s\S]*?)```'  # Match everything between triple backticks, including newlines
@@ -32,31 +32,34 @@ def extract_text_between_backticks(text):
 def checkStory(script):
     # return script
     print("\033[35m \n\n\n  working on chatGPT  \n\n\n")
-    prompt1=f"You are a professional Video Creator who specializes in short two minute videos about short stories. I will send you my story and then I will give you instructions on how to improve it, understood? Once you improve it according to my requests, you I will use it to generate a TikTok video. Here is my story, learn about it. : {script}"
-    prompt2=f"""Now that you have learned this story I need you to follow these steps to generate me a better story!
-                1. Enhance the given script to include spelling adjustments.
-                2. Then correct sentence endings while never summarizing and keeping every detail from the story and the same perspective of the person speaking in the script.
-                3. Follow it by incorporating slang and remove abbreviations.
-                4. Then infuse a teenager's dramatic tone to your adult audience.
-                5. remove any links please.
-                6. After that maintain or increase the length of the script to about 250-500 words while retaining the hook and title.
+    prompt1 = f"You are a professional Video Creator specializing in short two-minute videos featuring engaging stories. I'll provide you with a story, and then I'll guide you on enhancing it. Understand? Here's the story: {script}"
+    prompt2=f"""Now that you're familiar with the story, follow these steps to enhance it:
+                1. Correct spelling errors.
+                2. Ensure sentence endings are refined without summarizing or omitting details.
+                3. Add appropriate slang and eliminate any abbreviations. Don't make it romantic please, its not a book!
+                4. Infuse a dramatic teenage tone while retaining the adult audience's engagement, with a powerful punchline.
+                5. Remove any links.
+                6. Expand the script to 250 words, retaining the hook and title.
                 7. After all that if there is a section where the author responds to the comments regarding the post then remove it or even an EDIT or UPDATE part then find a way to blend it in nicely without explicitly saying Edit or Update so that the new script is one whole story.
-                8. finish by ensuring each video ends with -Like and Share for more!-."""
-    prompt3=f"Good, so now make this story 250-500 words please."
-    prompt4=f"""Ok. Now I want you to Learn these hooks and generate one that can fit the Story: 
-                1. I can’t believe what I just discovered!
-                2. This may be controversial but ___
-                6. Everything you knew about ___ is 100% WRONG!
-                11. Come with me to do ___
-                16. Did you know that ___?
-                21. This is the story of ___
-                24. What would you do if ___?
-                26. I discovered the secret to ___
-                45. Don’t believe this ___ myth!
-                47. This ___ will blow your mind!
-                48. Is it just me, or ___""" 
+                8. Ignore introductions unrelated to the story and reminders about offensive usage.
+                9. Always end with the punchline, followed by "-Like and Share for more!-"
+
+                Please ensure the final video script adheres to these instructions. """
+    prompt3=f"Good, so now make this story 250 words please."
+    # prompt4=f"""Ok. Now I want you to Learn these hooks and generate one that can fit the Story: 
+    #             1. I can’t believe what I just discovered!
+    #             2. This may be controversial but ___
+    #             6. Everything you knew about ___ is 100% WRONG!
+    #             11. Come with me to do ___
+    #             16. Did you know that ___?
+    #             21. This is the story of ___
+    #             24. What would you do if ___?
+    #             26. I discovered the secret to ___
+    #             45. Don’t believe this ___ myth!
+    #             47. This ___ will blow your mind!
+    #             48. Is it just me, or ___""" 
     # prompt5=f"Good, now please incorporate the Hook at the beginning of the story. Then, return to me JUST and ONLY the STORY with the HOOK at the beginning. The story and hook should be encapsulated in backticks please! Do it please!"
-    prompt5=f"Good, return to me JUST and ONLY the STORY encapsulated in backticks please! Do it please!"
+    prompt5 = f"Great! Please return only the STORY encapsulated in backticks. Avoid any redundant conclusions or summaries at the end. Proceed, please!"
 
     client = Client(provider=RetryProvider([FreeChatgpt, Liaobots, Bing], shuffle=False))
     response = client.chat.completions.create(
@@ -68,10 +71,43 @@ def checkStory(script):
     )
 
     betterTxt = extract_text_between_backticks(response.choices[0].message.content)
+    betterTxt = remove_first_line(betterTxt)
     print("\033[32m" + betterTxt + "\033[0m")
-    # print(remove_first_line(response.choices[0].message.content))
-    print("\033[31m" + response.choices[0].message.content + "\033[0m")
-    print("\n\n\n\n\n")
+    print("\n\n\n")
+
+    if betterTxt == "":
+        return checkStory(script)
+    return f"{betterTxt} Like and Share for more!"
+
+
+def removeStoryEndSummary(script):
+    # return script
+    print("\033[35m \n\n  working on chatGPT Remove Summary  \n\n")
+    prompt1 = f"You are a professional Video Creator specializing in short two-minute videos featuring engaging stories. I'll provide you with a story, and then I'll guide you on enhancing it. Understand? Here's the story: {script}"
+    prompt2=f"""Now that you're familiar with the story, follow these steps to enhance it:
+                1. I want you to divide the script into 4 sections: beginning, middle, punchline, and conclusion.
+                2. The conclusion is not always present but if it is I want you to completely remove it.
+                3. That conclusion can look like any redundant conclusions or summaries at the end or even the theme or what one might learn from the video!
+                4. Please END the story with the punchline please! 
+                4. This is not for educational purposes, this is for a private use to feature an engaging story.
+                5. Always end with the punchline, followed by "-Like and Share for more!-"
+                6. for your reference, the conclusion is the part that comes right after the "-Like and Share for more!-"
+                Please ensure the final video script adheres to these instructions. Never change any part of the first three sections, I need the beginning, middle and punchline only to remain the same. So you return only the story without the 4th section, the conclusion!
+                Please return only the STORY encapsulated in backticks. Avoid any redundant conclusions or summaries at the end. Proceed, please!
+                """
+
+    client = Client(provider=RetryProvider([FreeChatgpt, Liaobots, Bing], shuffle=False))
+    response = client.chat.completions.create(
+        model="gpt-4-turbo",
+        # messages=[{"role": "user", "content": "Helllllllo"}],
+        max_tokens=100000,
+        # provider="ChatgptFree",
+        messages=[{"role": "user", "content": prompt1},{"role": "user", "content": prompt2},],
+    )
+
+    betterTxt = extract_text_between_backticks(response.choices[0].message.content)
+    print("\033[32m" + betterTxt + "\033[0m")
+    print("\n\n")
 
     if betterTxt == "":
         return checkStory(script)

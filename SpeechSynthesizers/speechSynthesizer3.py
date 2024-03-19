@@ -11,5 +11,5 @@ class SpeechSynthesizer:
 
     def createMP3(self, text: str, path: str, voice: str):
         tts = generate(text=text, voice=voice)
-        save(tts, f"{path}/voiceover.mp3")
+        save(tts, f"{path}/voiceover.wav")
 

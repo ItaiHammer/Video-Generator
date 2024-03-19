@@ -2,14 +2,6 @@ import sys
 import os
 import praw
 import random
-import re
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('averaged_perceptron_tagger')
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from collections import Counter
 from dotenv import load_dotenv
 from chatGPTassist import checkStory
 
@@ -27,45 +19,14 @@ reddit.read_only = True
 # Constants
 MIN_WORDS_PER_POST = 120
 MAX_WORDS_PER_POST = 300
-NUMBER_OF_POSTS_TO_CHECK = 10
+NUMBER_OF_POSTS_TO_CHECK = 90
 
 topic_related_words = [
     "advice",
-    "foru",
-    "foryou",
+    "funny",
     "reddit",
     "stories",
-    "life",
-    "love",
     "tips",
-    "help",
-    "community",
-    "experience",
-    "support",
-    "wisdom",
-    "guidance",
-    "suggestions",
-    "counsel",
-    "recommendations",
-    "insights",
-    "sharing",
-    "lessons",
-    "knowledge",
-    "feedback",
-    "LoveLife",
-    "WiseWords",
-    "StoryTime",
-    "LifeHacks",
-    "HeartfeltHelp",
-    "ExperienceExchange",
-    "LoveWisdom",
-    "CommunityConnections",
-    "reddit",
-    "redditAdvice",
-    "redditStories",
-    "redditLove",
-    "redditTips",
-    "redditCommunity",
 ]
 
 
@@ -115,31 +76,8 @@ def Get_List_Of_Good_Posts(numCycles): # numCycles should start as 1!
 
 
 def GenerateTags(post):
-    script = post["script"]
-
-    tokens = word_tokenize(script.lower())
-    # Remove stopwords like a, the, and
-    stop_words = set(stopwords.words('english'))
-    filtered_tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
-    # Part-of-Speech Tagging
-    nltk.pos_tag(filtered_tokens)
-
-    # Frequency Analysis - counts the most frequent words
-    word_freq = Counter(filtered_tokens)
-    # Select top keywords
-    tags = [word for word, _ in word_freq.most_common(10)]
-
-    # Tokenize the title - also get words from the title
-    title = post["subreddit"]
-    title_tokens = word_tokenize(title.lower())
-    # Tokenization of the script
-    tokens = word_tokenize(script.lower())
-    # Remove stopwords from title and script tokens
-    stop_words = set(stopwords.words('english'))
-    filtered_title_tokens = [word for word in title_tokens if word.isalnum() and word not in stop_words]
-
     # adds all tags togther
-    tags = tags + filtered_title_tokens + topic_related_words
+    tags = topic_related_words
     tags.append(post["subreddit"]) # make a premade list of common tags for the specific subreddit!
     # checks for duplicates
     tags = list(set(tags))
@@ -176,7 +114,7 @@ def makeRedditScript(subredditName, numPostsWanted):
             break
 
         post = random.choice(sorted_posts)
-        newScript = f"{post.title}. {post.selftext}. Like and Share for more!"
+        newScript = f"{post.title}. {post.selftext}."
         print(f"\n\n \033[31m printing the Script Before ChatGPT for video: {i+1} \033[0m")
         print(newScript)
         newScript = checkScript(newScript)
@@ -189,7 +127,7 @@ def makeRedditScript(subredditName, numPostsWanted):
             'url': post.url,
         }
 
-        # tagList = GenerateTags(out)
-        # out['tags'] = tagList
+        tagList = GenerateTags(out)
+        out['tags'] = tagList
         returningPosts.append(out)
     return returningPosts

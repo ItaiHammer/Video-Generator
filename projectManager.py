@@ -8,8 +8,7 @@ assetsDir = './assets/'
 currentRunVideosProduced = 1
 # create video
 def createRedditVideo(name, data):        
-
-    redditPosts = makeRedditScript(data["subreddit"], data["numberVideos"])
+    redditPosts = makeRedditScript(data["subreddit"], data["videoCount"])
     for i in range(len(redditPosts)):
         print(f"\033[35m working on video #{i+1} \033[0m")
         video = Video(name, data)

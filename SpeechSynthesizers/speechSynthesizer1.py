@@ -21,7 +21,7 @@ class SpeechSynthesizer:
         self.engine.say(text)
 
     def createMP3(self, text: str, path: str):
-        fileName = f"{path}/voiceover.mp3"
+        fileName = f"{path}/voiceover.wav"
 
         self.engine.save_to_file(text, fileName)
         self.engine.runAndWait()

@@ -18,13 +18,13 @@ def run():
     if (command[0] == "dump"):
         dump()
     elif (command[0] == 'createredditvideo'):
-        while len(command) < 5:
+        while len(command) <= 6:
             command.append(None)
 
         if command[1] == None: command[2] = "video"
         if command[2] == None: command[2] = "shortStories"
-        # Convert command[5] to integer before assigning
-        number_videos = int(command[4]) if command[4] is not None else 1
+        if (command[5] == None): command[5] = ""
+        if (command[6] == None): command[6] = 1
 
         name = command[1]
 
@@ -32,8 +32,9 @@ def run():
             'type': 'reddit',
             'subreddit': command[2],
             'music': command[3] == 'y' or command[3] == 'yes',
-            'captions': command[4] == 'y' or command[4] == 'yes',
-            'numberVideos': number_videos
+            'subtitles': command[4] == 'y' or command[4] == 'yes',
+            'watermark': command[5],
+            'videoCount': command[6]
         }
         
         createRedditVideo(name, data)

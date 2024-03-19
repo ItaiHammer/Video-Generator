@@ -1,4 +1,10 @@
 {
     "terminal.integrated.enableImages": true,
-    "terminal.integrated.gpuAcceleration": "on"
+    "terminal.integrated.gpuAcceleration": "on",
+    "python.analysis.extraPaths": [
+        "./TiktokAutoUploader"
+    ],
+    "cSpell.words": [
+        "tiktok"
+    ]
 }
