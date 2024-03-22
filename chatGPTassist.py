@@ -33,19 +33,27 @@ def checkStory(script):
     # return script
     print("\033[35m \n\n\n  working on chatGPT  \n\n\n")
     prompt1 = f"You are a professional Video Creator specializing in short two-minute videos featuring engaging stories. I'll provide you with a story, and then I'll guide you on enhancing it. Understand? Here's the story: {script}"
-    prompt2=f"""Now that you're familiar with the story, follow these steps to enhance it:
-                1. Correct spelling errors.
-                2. Ensure sentence endings are refined without summarizing or omitting details.
-                3. Add appropriate slang and eliminate any abbreviations. Don't make it romantic please, its not a book!
-                4. Infuse a dramatic teenage tone while retaining the adult audience's engagement, with a powerful punchline.
-                5. Remove any links.
-                6. Expand the script to 250 words, retaining the hook and title.
-                7. After all that if there is a section where the author responds to the comments regarding the post then remove it or even an EDIT or UPDATE part then find a way to blend it in nicely without explicitly saying Edit or Update so that the new script is one whole story.
-                8. Ignore introductions unrelated to the story and reminders about offensive usage.
-                9. Always end with the punchline, followed by "-Like and Share for more!-"
+    # prompt2=f"""Now that you're familiar with the story, follow these steps to enhance it:
+    #             1. Correct spelling errors.
+    #             2. Ensure sentence endings are refined without summarizing or omitting details.
+    #             3. Add appropriate slang and eliminate any abbreviations. Don't make it romantic please, its not a book!
+    #             4. Infuse a dramatic teenage tone while retaining the adult audience's engagement, with a powerful punchline.
+    #             5. Remove any links.
+    #             6. Expand the script to 190 words, retaining the hook and title.
+    #             7. After all that if there is a section where the author responds to the comments regarding the post then remove it or even an EDIT or UPDATE part then find a way to blend it in nicely without explicitly saying Edit or Update so that the new script is one whole story.
+    #             8. Ignore introductions unrelated to the story and reminders about offensive usage.
+    #             9. Always end with the punchline, followed by "-Like and Share for more!-"
 
-                Please ensure the final video script adheres to these instructions. """
-    prompt3=f"Good, so now make this story 250 words please."
+    #             Please ensure the final video script adheres to these instructions. """
+    prompt2=f"""follow these steps to enhance it:
+            4. Infuse a dramatic teenage tone while retaining the adult audience's engagement, with a powerful punchline.
+            5. Remove any links.
+            6. Expand the script to 190 words
+            7. After all that if there is a section where the author responds to the comments regarding the post then remove it
+            8. Ignore introductions unrelated to the story and reminders about offensive usage.
+            9. Always end with the punchline, followed by "-Like and Share for more!-"
+            """
+    # prompt3=f"Good, so now make this story 190 words please."
     # prompt4=f"""Ok. Now I want you to Learn these hooks and generate one that can fit the Story: 
     #             1. I can’t believe what I just discovered!
     #             2. This may be controversial but ___
@@ -67,7 +75,7 @@ def checkStory(script):
         # messages=[{"role": "user", "content": "Helllllllo"}],
         max_tokens=100000,
         # provider="ChatgptFree",
-        messages=[{"role": "user", "content": prompt1},{"role": "user", "content": prompt2},{"role": "user", "content": prompt3},{"role": "user", "content": prompt5}],
+        messages=[{"role": "user", "content": prompt1},{"role": "user", "content": prompt2},{"role": "user", "content": prompt5}],
     )
 
     betterTxt = extract_text_between_backticks(response.choices[0].message.content)
@@ -77,7 +85,11 @@ def checkStory(script):
 
     if betterTxt == "":
         return checkStory(script)
-    return f"{betterTxt} Like and Share for more!"
+    return betterTxt
+
+
+
+
 
 
 def removeStoryEndSummary(script):

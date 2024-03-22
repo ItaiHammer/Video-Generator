@@ -38,6 +38,7 @@ def run():
         }
         
         createRedditVideo(name, data)
+        
     elif command[0] == "scripts":
         print("\033[32m going  over files \033[0m")
         json_data = read_json_file("scripts.json")

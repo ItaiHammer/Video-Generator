@@ -1,8 +1,8 @@
 import os
-# from tiktok_uploader import tiktok
 from tiktok_uploader import tiktok
 
 def upload_video_from_json(data):
+    print("\033[32m Starting Uploading process...\033[0m")
     # Pre-made user credentials
     pre_made_user = "bob"
     
@@ -25,3 +25,5 @@ def upload_video_from_json(data):
 
     # Upload video
     tiktok.upload_video(pre_made_user, video_path, title, schedule_time, comment, duet, stitch, visibility, brandorganic, brandcontent, ailabel, proxy)
+
+# upload_video_from_json({"video_path": "out/jokes_111/video.mp4", "title": "my new joke"})

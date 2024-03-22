@@ -13,15 +13,22 @@ def createRedditVideo(name, data):
         print(f"\033[35m working on video #{i+1} \033[0m")
         video = Video(name, data)
         redditPost = redditPosts[i]
+        print(f"\033[36m Writing script to file for #{i+1} \033[0m")
         file = open(f"{video.path}/script.txt", 'a', encoding='utf-8')
         file.write(redditPost["script"])
         file.close()
         # print("Do you approve the script? respond \"y\" if yes")
         # scriptApproval = input()
         # if (scriptApproval == "y"):
+        print(f"\033[37m Generating TTS for #{i+1} \033[0m")
         video.createAudio(redditPost['script'])
+        print(f"\033[38m Starting the video gen for #{i+1} \033[0m")
         video.createRedditVideo(redditPost, data)
     return "videos complete!"
+
+
+
+
 
 def createScriptedVideo(name, data):        
     print(data)

@@ -40,8 +40,9 @@ class Video:
     #    tts.createMP3(script, self.path)
 
     def createRedditVideo(self, redditPost, data):
+        print(f"\033[36m Making a banner \033[0m")
         banner = AssetManager.createRedditBanner(redditPost)
-        
+        print(f"\033[37m Combining everything togther \033[0m")
         VideoGenerator.createRedditVideo(self.path, banner, data, redditPost)
 
     def createScriptedVideo(self, redditPost, data):

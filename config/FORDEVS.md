@@ -27,6 +27,8 @@ Follow these instructions as well from (make sure you have NodeJS and npm instal
     `cd tiktok_uploader/tiktok-signature/`
     `npm i`
 
+Everytime running the autoupload: make sure that you have the latest chrome version as in here: https://www.google.com/chrome/update/
+
 First and maybe second time when running code it will never work, give it a minute and then try again, it will work immediately!
 
 When running, make sure the load_env has or does't have "utf-16" for the program to work in all instances!

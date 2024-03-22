@@ -169,8 +169,8 @@ class AssetManager:
 
                 word['word'] = word['word'][0:1].upper() + word['word'][1:]
 
-                textOutline = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", color = 'yellow', stroke_color="black", stroke_width=4).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
-                text = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", color = 'yellow').set_start(word['start']).set_pos(("center","center")).set_duration(duration)
+                textOutline = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=4).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
+                text = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow').set_start(word['start']).set_pos(("center","center")).set_duration(duration)
                 
                 w = CompositeVideoClip([textOutline, text]).set_pos(("center","center"))
                 
@@ -256,13 +256,15 @@ class VideoGenerator:
         # video.audio.close()
 
     def createRedditVideo(path: str, banner, data, redditPost):
+        print(f"\033[35m Starting Vosk \033[0m")
         AssetManager.generateTrascript(path)
+        print(f"\033[34m Done Vosk, making intro & gameplay \033[0m")
         introDuration = AssetManager.findRedditIntroLength(redditPost)
         video = []
         voiceover = AudioFileClip(f"{path}/voiceover.wav")
         gameplay = AssetManager.chooseRandomSubclip(voiceover.duration+ 1, VideoFileClip(f"{gameplayDir}{AssetManager.getRandomGameplay().name}")).fx(vfx.fadein, introDuration)
         introBanner = banner.set_duration(introDuration+1).set_pos(("center","center")).resize(width=(((gameplay.size[1] * 9/16)/100) * 70))
-        
+        print(f"\033[33m Adding watermark, subtitles, and music if requested \033[0m")
         video.append(gameplay)
         if len(data['watermark']) != 0:
             w = TextClip(data['watermark'], fontsize = 50 - (len(data['watermark'])/2), font="Calibri-Bold", color = 'white').set_pos(("center", (gameplay.size[1]/100) * 55)).set_duration(voiceover.duration+ 1).set_opacity(.2).set_start(introDuration).set_duration(voiceover.duration+ 1 - introDuration)
@@ -271,6 +273,7 @@ class VideoGenerator:
             video.append(AssetManager.generateSubtitles(path, voiceover.duration + 1))
         video.append(introBanner)
 
+        print(f"\033[35m Making into one clip \033[0m")
         video = CompositeVideoClip(video)
 
         if (data['music']):
@@ -286,6 +289,7 @@ class VideoGenerator:
             video.audio = voiceover
 
         # cropping it to tiktok aspect ratio
+        # print(f"\033[37m Cropping \033[0m")
         # (w, h) = video.size
         # if (w % 9 != 0 or h % 16 != 0):
 
@@ -295,8 +299,29 @@ class VideoGenerator:
         #     x1, x2 = (w - cropWidth)//2, (w+cropWidth)//2
         #     y1, y2 = 0, h
         #     video = crop(video, x1=x1, y1=y1, x2=x2, y2=y2)
+            
 
-        video.write_videofile(f"{path}/video.mp4")
+        # print(f"\033[32m Writing Video File (without subtitles) \033[0m")
+        # video.write_videofile(f"{path}/video.mp4", threads=8, preset="ultrafast", fps=12)
+
+        # Create subtitle clips
+        # print(f"\033[33m Creating subtitle clip \033[0m")
+        # subtitles_clip = AssetManager.generateSubtitles(path, voiceover.duration + 1)
+
+        # print(f"\033[32m Writing Subtitle File \033[0m")
+        # subtitles_clip.write_videofile(f"{path}/subtitles.mp4", threads=8,preset="ultrafast", fps=12)
+
+        # print(f"\033[35m Combining video files \033[0m")
+        # final_video = CompositeVideoClip([video.set_position("center"), VideoFileClip(f"{path}/subtitles.mp4").set_position("center")])
+
+        # print(f"\033[32m Writing Final Video File \033[0m")
+        # final_video.write_videofile(f"{path}/video.mp4", threads=8,preset="ultrafast", fps=25)
+
+
+
+        print(f"\033[32m Writing Video File \033[0m")
+        video.write_videofile(f"{path}/video.mp4", threads=8,preset="ultrafast")
+        print(f"\033[34m Done with Videdo, now uploading! \033[0m")
 
         # upload video
         data = {

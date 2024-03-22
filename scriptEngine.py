@@ -19,7 +19,7 @@ reddit.read_only = True
 # Constants
 MIN_WORDS_PER_POST = 120
 MAX_WORDS_PER_POST = 300
-NUMBER_OF_POSTS_TO_CHECK = 90
+NUMBER_OF_POSTS_TO_CHECK = 300
 
 topic_related_words = [
     "advice",
