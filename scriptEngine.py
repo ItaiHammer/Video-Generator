@@ -101,7 +101,7 @@ def checkScript(script):
     return theScript
 
 # method that searches for posts and writes a post's script into a file
-def makeRedditScript(subredditName, numPostsWanted):
+def makeRedditScript(subredditName, numPostsWanted, isChatGPT):
     global subreddit
     subreddit = reddit.subreddit(subredditName)
 
@@ -117,7 +117,8 @@ def makeRedditScript(subredditName, numPostsWanted):
         newScript = f"{post.title}. {post.selftext}."
         print(f"\n\n \033[31m printing the Script Before ChatGPT for video: {i+1} \033[0m")
         print(newScript)
-        newScript = checkScript(newScript)
+        if isChatGPT == True:
+            newScript = checkScript(newScript)
         out = {
             'script': newScript,
             'title': post.title,

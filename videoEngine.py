@@ -13,6 +13,9 @@ import soundfile
 assetsDir = f"./assets/"
 gameplayDir = f"{assetsDir}/gameplay/"
 
+# constants
+SUBTITLES_TIME_PER_CAPTIONS = 10
+
 # list of all words and their time in the video
 transcript = []
 
@@ -153,13 +156,30 @@ class AssetManager:
         subtitles = []
 
         subtitles.append(ColorClip(size =(500, 500), color =[0, 0, 0]).set_start(duration).subclip(0, 0))
-        
+        print("starting to generate subtitles")
         for sentence in transcript:
             if len(sentence) == 1:
                 # sometimes there are bugs in recognition 
                 # and it returns an empty dictionary
                 # {'text': ''}
                 continue
+            # for i in range(len(sentence['result'])):
+            #     script = ""
+            #     duration = 0
+            #     check = True
+            #     startTime = sentence['result'][i]['start']
+            #     while duration < SUBTITLES_TIME_PER_CAPTIONS and check:
+            #         if i >= len(sentence['result']): # check here that no bugs
+            #             check = False
+            #         else: 
+            #             script = script + sentence['result'][i]["word"]
+            #             duration += sentence['result'][i]['end'] - sentence['result'][i]['start']
+            #             i += 1
+            #     textOutline = TextClip(script, fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=4).set_start(startTime).set_pos(("center","center")).set_duration(duration)
+            #     text = TextClip(script, fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow').set_start(startTime).set_pos(("center","center")).set_duration(duration)
+            #     w = CompositeVideoClip([textOutline, text]).set_pos(("center","center")) 
+            #     subtitles.append(w)
+
             for i, word in enumerate(sentence['result']):
                 duration = 0
                 if i+1 >= len(sentence['result']):
@@ -169,12 +189,12 @@ class AssetManager:
 
                 word['word'] = word['word'][0:1].upper() + word['word'][1:]
 
-                textOutline = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=4).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
-                text = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow').set_start(word['start']).set_pos(("center","center")).set_duration(duration)
+                textOutline = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=2).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
+                # text = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow').set_start(word['start']).set_pos(("center","center")).set_duration(duration)
                 
-                w = CompositeVideoClip([textOutline, text]).set_pos(("center","center"))
+                # w = CompositeVideoClip([textOutline, text]).set_pos(("center","center")) # don't need this anymore
                 
-                subtitles.append(w)
+                subtitles.append(textOutline)
         
         print("Subtitle Transcription complete!!!")
 
@@ -321,23 +341,24 @@ class VideoGenerator:
 
         print(f"\033[32m Writing Video File \033[0m")
         video.write_videofile(f"{path}/video.mp4", threads=8,preset="ultrafast")
-        print(f"\033[34m Done with Videdo, now uploading! \033[0m")
+        print(f"\033[34m Done with Video, now uploading! \033[0m")
 
         # upload video
-        data = {
-            "video_path": f"{path}/video.mp4",
-            "title": redditPost["tags"],
-            "schedule_time": 0,
-            "comment": 1,
-            "duet": 0,
-            "stitch": 0,
-            "visibility": 0,
-            "brandorganic": 0,
-            "brandcontent": 0,
-            "ailabel": 0,
-            "proxy": ""
-        }
-        upload_video_from_json(data)
+        if data["upload"]:
+            data = {
+                "video_path": f"{path}/video.mp4",
+                "title": redditPost["tags"],
+                "schedule_time": 0,
+                "comment": 1,
+                "duet": 0,
+                "stitch": 0,
+                "visibility": 0,
+                "brandorganic": 0,
+                "brandcontent": 0,
+                "ailabel": 0,
+                "proxy": ""
+            }
+            upload_video_from_json(data)
 
         video.close()
         # video.audio.close()
