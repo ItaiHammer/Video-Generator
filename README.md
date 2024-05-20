@@ -18,7 +18,7 @@ Unleash the power of Reddit's diverse and engaging content with **Video-Generato
 
 Unleash your creativity, share your discoveries, and create viral TikTok videos effortlessly. Download **Video-Generator** now and let the storytelling begin! 🚀🌟
 
-# the best way to upload:
+# The Best Way to Upload:
 Make sure that you post at max 3-4 videos a day, each 3-4 hours apart so that they don't think you are a bot.
 Make sure that there are only 6 hashtags per video so you won't confuse the algorithm and that they are always the same to the niche.
 All videos should be over a minute to be monetized.
