@@ -17,7 +17,7 @@
 
 import re
 from g4f.client import Client
-from g4f.Provider import RetryProvider, Phind, FreeChatgpt, Liaobots, Bing
+from g4f.Provider import RetryProvider, FreeChatgpt, Liaobots, Bing
 import g4f.debug
 g4f.debug.logging = True
 
@@ -137,3 +137,20 @@ def removeStoryEndSummary(script):
 
 # Edit: OMG my first gold! Thank you!. Like and Share for more!"""
 # checkStory(script)
+
+
+
+def generateImagesForVideo(sentences):
+    print("\033[35m starting chatGPT image GENERATOR")
+    client = Client(provider=Bing)
+    print(" Found Client !!!!")
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=f"an ultra realistic image showing a {sentences['text']}",
+    )
+    image_url = response.data[0].url
+    print(image_url)
+
+    if image_url == "" and type(image_url):
+        return checkStory(sentences)
+    return image_url

@@ -27,6 +27,8 @@ Follow these instructions as well from (make sure you have NodeJS and npm instal
     `cd tiktok_uploader/tiktok-signature/`
     `npm i`
 
+For more information on the ChatGPT, go to https://github.com/xtekky/gpt4free/blob/main/docs/client.md#advanced-example-using-geminiprovision 
+
 Everytime running the autoupload: make sure that you have the latest chrome version as in here: https://www.google.com/chrome/update/
 
 First and maybe second time when running code it will never work, give it a minute and then try again, it will work immediately!

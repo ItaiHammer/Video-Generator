@@ -11,7 +11,7 @@ def read_json_file(file_path):
 def run():
     print('Type your command below:')
 
-    # best starter is: createredditvideo jokes jokes y y y n ZiaGamez 1
+    # best starter is: createredditvideo jokes jokes y y y n n ZiaGamez 1 y
 
     command = input().split(" ")
 
@@ -23,8 +23,8 @@ def run():
 
         if command[1] == None: command[2] = "video"
         if command[2] == None: command[2] = "shortStories"
-        if (command[6] == None): command[6] = ""
-        if (command[7] == None): command[7] = 1
+        if (command[8] == None): command[8] = ""
+        if (command[9] == None): command[9] = 1
 
         name = command[1]
 
@@ -35,8 +35,10 @@ def run():
             'subtitles': command[4] == 'y' or command[4] == 'yes',
             'upload': command[5] == 'y' or command[5] == 'yes',
             'chatGPT': command[6] == 'y' or command[6] == 'yes',
-            'watermark': command[7],
-            'videoCount': int(command[8])
+            'chatGPTImages': command[7] == 'y' or command[7] == 'yes',
+            'watermark': command[8],
+            'videoCount': int(command[9]),
+            'makeVideo': command[10] == 'y' or command[10] == 'yes',
         }
         
         createRedditVideo(name, data)
