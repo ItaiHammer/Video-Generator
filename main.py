@@ -11,7 +11,9 @@ def read_json_file(file_path):
 def run():
     print('Type your command below:')
 
-    # best starter is: createredditvideo jokes jokes y y y n n ZiaGamez 1 y
+    # best starter to create a vid is: createredditvideo jokes jokes y y y n n ZiaGamez 1 y n
+    # starter to create a vid from script: scripts
+
 
     command = input().split(" ")
 
@@ -39,23 +41,15 @@ def run():
             'watermark': command[8],
             'videoCount': int(command[9]),
             'makeVideo': command[10] == 'y' or command[10] == 'yes',
+            'crop': command[11] == 'y' or command[11] == 'yes',
         }
         
         createRedditVideo(name, data)
-        
     elif command[0] == "scripts":
-        print("\033[32m going  over files \033[0m")
-        json_data = read_json_file("scripts.json")
-        name = command[1]
-        data = {
-            'type': 'border_security',
-            'subreddit': 'border_security',
-            'music': True,
-            'captions': True,
-            'data': json_data
-        }
+        print("\033[32m going over files \033[0m")
+        json_data = read_json_file("./scripts/scripts.json")
         
-        createScriptedVideo(name, data)
+        createScriptedVideo(json_data)
 
 
 def dump():

@@ -19,7 +19,7 @@ You can find the official API page on this **[website](https://www.reddit.com/pr
 7.  nltk - The Natural Language Toolkit
 
 Install Command
-    `pip install python-dotenv elevenlabs praw pyttsx3 gTTS moviepy g4f[all] opencv-python`
+    `pip install python-dotenv elevenlabs praw pyttsx3 gTTS moviepy g4f[all] opencv-python difflib`
 
 Follow these instructions as well from (make sure you have NodeJS and npm installed): https://github.com/makiisthenes/TiktokAutoUploader 
     `cd TiktokAutoUploader`

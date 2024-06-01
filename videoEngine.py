@@ -155,6 +155,7 @@ class AssetManager:
     
     def generateSubtitles(path: str, duration, script):
 
+        print("starting better transcript")
         betterTranscript = fixTranscript(transcript, script)
 
         subtitles = []
@@ -176,8 +177,19 @@ class AssetManager:
                 duration = betterTranscript[i+1]['start'] - word['start']
 
             word['word'] = word['word'][0:1].upper() + word['word'][1:]
-            #        don't delete this line                                                                                                            originally 4
-            textOutline = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=2).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
+            #        don't delete this line   
+            #                                                                                                          originally 4
+            fontSize = 60
+            length = len(word['word'])
+            if length > 25:
+                fontSize = 40
+            elif length > 20:
+                fontSize = 45
+            elif length > 15:
+                fontSize = 50
+            elif length > 10:
+                fontSize = 55
+            textOutline = TextClip(word["word"], fontsize = fontSize, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=2).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
             # text = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow').set_start(word['start']).set_pos(("center","center")).set_duration(duration)
             # newText += word['word'] + " "
             subtitles.append(textOutline)
@@ -307,12 +319,12 @@ class VideoGenerator:
 
         print(f"\033[33m Adding watermark, subtitles, and music if requested \033[0m")
         video.append(gameplay)
-        if len(data['watermark']) != 0:
+        if len(data["watermark"]) != 0:
             w = TextClip(data['watermark'], fontsize = 50 - (len(data['watermark'])/2), font="Calibri-Bold", color = 'white').set_pos(("center", (gameplay.size[1]/100) * 55)).set_duration(voiceover.duration+ 1).set_opacity(.2).set_start(introDuration).set_duration(voiceover.duration+ 1 - introDuration)
             video.append(w)
-        if data['subtitles']:
+        if data["subtitles"]:
             video.append(AssetManager.generateSubtitles(path, voiceover.duration + 1, redditPost["script"]))
-        if data['chatGPTImages']:
+        if data["chatGPTImages"]:
             video.append(AssetManager.getImagesFromChat(path))
             # AssetManager.getImagesFromChat(path)
         video.append(introBanner)
@@ -333,16 +345,17 @@ class VideoGenerator:
             video.audio = voiceover
 
         # cropping it to tiktok aspect ratio
-        # print(f"\033[37m Cropping \033[0m")
-        # (w, h) = video.size
-        # if (w % 9 != 0 or h % 16 != 0):
+        if data["crop"]:
+            print(f"\033[37m Cropping \033[0m")
+            (w, h) = video.size
+            if (w % 9 != 0 or h % 16 != 0):
 
-        #     cropWidth = h * 9/16
-        #     # x1,y1 is the top left corner, and x2, y2 is the lower right corner of the cropped area.
+                cropWidth = h * 9/16
+                # x1,y1 is the top left corner, and x2, y2 is the lower right corner of the cropped area.
 
-        #     x1, x2 = (w - cropWidth)//2, (w+cropWidth)//2
-        #     y1, y2 = 0, h
-        #     video = crop(video, x1=x1, y1=y1, x2=x2, y2=y2)
+                x1, x2 = (w - cropWidth)//2, (w+cropWidth)//2
+                y1, y2 = 0, h
+                video = crop(video, x1=x1, y1=y1, x2=x2, y2=y2)
         
         if data['makeVideo']:
             print(f"\033[32m Ending: Writing Video File \033[0m")
