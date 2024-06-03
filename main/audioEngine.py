@@ -1,11 +1,14 @@
-import sys
 import os
 from random import randint
-
-sys.path.append('./SpeechSynthesizers')
+from projectManager import base_dir
+import sys
+# speech_dir = f'{base_dir}/SpeechSynthesizers'
+# print("speech_dir---------------------------------------------")
+# print(speech_dir)
+# sys.path.append('/SpeechSynthesizers')
 from SpeechSynthesizers import speechSynthesizer1, speechSynthesizer2, speechSynthesizer3
 
-musicDir = './assets/music/'
+musicDir = f'{base_dir}/assets/music/'
 
 class SpeechSynthesizer:
     speechSynthesizer1 = speechSynthesizer1.SpeechSynthesizer

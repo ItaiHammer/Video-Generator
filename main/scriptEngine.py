@@ -1,7 +1,7 @@
-import sys
 import os
 import praw
 import random
+from projectManager import base_dir
 from dotenv import load_dotenv
 from chatGPTassist import checkStory
 

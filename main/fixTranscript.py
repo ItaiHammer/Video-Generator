@@ -1,5 +1,6 @@
 import difflib
 import re
+from projectManager import base_dir
 
 def fixTranscript(transcript, script):
   # transcriptList = transcript # comes already as a list

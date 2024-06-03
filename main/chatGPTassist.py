@@ -16,6 +16,7 @@
 #         return text
 
 import re
+from projectManager import base_dir
 from g4f.client import Client
 from g4f.Provider import RetryProvider, FreeChatgpt, Liaobots, Bing
 import g4f.debug

@@ -1,8 +1,9 @@
 import os
+from projectManager import base_dir
 from random import randint, uniform
 from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, TextClip, CompositeVideoClip, CompositeAudioClip, concatenate_audioclips, ColorClip, vfx, afx, concatenate_videoclips
 from moviepy.video.fx.all import crop
-from uploadTik import upload_video_from_json
+from main.uploadTik import upload_video_from_json
 from audioEngine import Music
 from chatGPTassist import generateImagesForVideo
 from fixTranscript import fixTranscript
@@ -13,8 +14,8 @@ import wave
 import soundfile
 import requests 
 
-assetsDir = f"./assets/"
-gameplayDir = f"{assetsDir}/gameplay/"
+
+gameplayDir = f"{base_dir}/assets/gameplay/"
 
 # constants
 SUBTITLES_TIME_PER_CAPTIONS = 10
@@ -90,9 +91,9 @@ class AssetManager:
         return clippedVideo
     
     def createRedditBanner(redditPost):
-        templateBanner = ImageClip('./assets/reddit/intro banner.png').resize(height=200).set_pos('center')
+        templateBanner = ImageClip(f'{base_dir}/assets/reddit/intro banner.png').resize(height=200).set_pos('center')
 
-        pfp = ImageClip('./assets/reddit/pfp.png').resize(height=50).set_position((10, 10))
+        pfp = ImageClip(f'{base_dir}/assets/reddit/pfp.png').resize(height=50).set_position((10, 10))
         
         name = TextClip(f"r/{redditPost['subreddit'][0].upper()}{redditPost['subreddit'][1:]}", fontsize = 20, font="Amiri-bold", color = 'black').set_position((70, 25))
 
@@ -137,7 +138,7 @@ class AssetManager:
         wf = wave.open(f"{path}/voiceover.wav", "rb")
 
         # Initialize model and recognizer
-        model = Model("./config/vosk-model")
+        model = Model(f"{base_dir}/config/vosk-model")
         rec = KaldiRecognizer(model, wf.getframerate())
         rec.SetWords(True)
 
@@ -157,7 +158,9 @@ class AssetManager:
 
         print("starting better transcript")
         betterTranscript = fixTranscript(transcript, script)
-
+        swearwords = {}
+        with open(f'{base_dir}/config/swearWordsDict.json') as f:
+            swearwords = json.load(f)
         subtitles = []
 
         subtitles.append(ColorClip(size =(500, 500), color =[0, 0, 0]).set_start(duration).subclip(0, 0))
@@ -189,6 +192,30 @@ class AssetManager:
                 fontSize = 50
             elif length > 10:
                 fontSize = 55
+            # fix swear words...
+            splited = word['word'].split(" ")
+            newString = ""
+            for j in range(len(splited)):
+                stringToAdd = splited[j] + " "
+                for key in swearwords:
+                    if splited[j] == key:
+                        stringToAdd = swearwords[key] + " "
+                        break
+                newString += stringToAdd
+                        # word['word'] = swearwords[key]# fix if it includes it changes everything, words like class to as*!!!!!!
+            word['word'] = newString     
+
+            word['word'].replace('"', '')
+            word['word'].replace("'", '')
+            word['word'].replace(",", '')
+            word['word'].replace(".", '')
+            word['word'].replace("{", '')
+            word['word'].replace("}", '')
+            word['word'].replace("[", '')
+            word['word'].replace("]", '')
+            word['word'].replace(";", '')
+            word['word'].replace(":", '')
+
             textOutline = TextClip(word["word"], fontsize = fontSize, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=2).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
             # text = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow').set_start(word['start']).set_pos(("center","center")).set_duration(duration)
             # newText += word['word'] + " "
@@ -226,7 +253,7 @@ class AssetManager:
     
     def getImagesFromChat(path):
         #  delete all files in the temp folder...
-        directory_path = "./assets/tempImagesForVideo"
+        directory_path = "/assets/tempImagesForVideo"
         files = os.listdir(directory_path)
         for file in files:
             file_path = os.path.join(directory_path, file)
@@ -256,56 +283,56 @@ class AssetManager:
     
 
 class VideoGenerator:
-    def createScriptedVideo(path: str, music, redditPost):
+    # def createScriptedVideo(path: str, music, redditPost):
         
-        # Generate Everything
-        introDuration = 4
-        voiceover = AudioFileClip(f"{path}/voiceover.mp3")
+    #     # Generate Everything
+    #     introDuration = 4
+    #     voiceover = AudioFileClip(f"{path}/voiceover.mp3")
 
-        # transcribe_gcs_with_word_time_offsets(f"{path}/voiceover.mp3")
+    #     # transcribe_gcs_with_word_time_offsets(f"{path}/voiceover.mp3")
 
 
-        gameplay = AssetManager.chooseRandomSubclip(voiceover.duration+ 1, VideoFileClip(f"{gameplayDir}{AssetManager.getRandomGameplay().name}")).fx(vfx.fadein, introDuration)
-        captions = AssetManager.createRedditCaptions(redditPost, voiceover.duration)
+    #     gameplay = AssetManager.chooseRandomSubclip(voiceover.duration+ 1, VideoFileClip(f"{gameplayDir}{AssetManager.getRandomGameplay().name}")).fx(vfx.fadein, introDuration)
+    #     captions = AssetManager.createRedditCaptions(redditPost, voiceover.duration)
 
-        # Compose all togther
-        video = CompositeVideoClip([gameplay, captions]) # includes order of things on the screen, first is below everything else
+    #     # Compose all togther
+    #     video = CompositeVideoClip([gameplay, captions]) # includes order of things on the screen, first is below everything else
 
-        # add music
-        if (music):
-            music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)
+    #     # add music
+    #     if (music):
+    #         music = AudioFileClip(f"/assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)
 
-            # music will be same duration as video
-            while (music.duration < voiceover.duration):
-                music = concatenate_audioclips([music, music])
+    #         # music will be same duration as video
+    #         while (music.duration < voiceover.duration):
+    #             music = concatenate_audioclips([music, music])
 
-            music = music.subclip(0, voiceover.duration)
+    #         music = music.subclip(0, voiceover.duration)
 
-            video.audio = CompositeAudioClip([voiceover, music])
-        else:
-            video.audio = voiceover
+    #         video.audio = CompositeAudioClip([voiceover, music])
+    #     else:
+    #         video.audio = voiceover
 
-        # write to file
-        video.write_videofile(f"{path}/video.mp4")
+    #     # write to file
+    #     video.write_videofile(f"{path}/video.mp4")
 
-        # upload video
-        data = {
-            "video_path": f"{path}/video.mp4",
-            "title": redditPost["tags"],
-            "schedule_time": 0,
-            "comment": 1,
-            "duet": 0,
-            "stitch": 0,
-            "visibility": 0,
-            "brandorganic": 0,
-            "brandcontent": 0,
-            "ailabel": 0,
-            "proxy": ""
-        }
-        upload_video_from_json(data)
+    #     # upload video
+    #     data = {
+    #         "video_path": f"{path}/video.mp4",
+    #         "title": redditPost["tags"],
+    #         "schedule_time": 0,
+    #         "comment": 1,
+    #         "duet": 0,
+    #         "stitch": 0,
+    #         "visibility": 0,
+    #         "brandorganic": 0,
+    #         "brandcontent": 0,
+    #         "ailabel": 0,
+    #         "proxy": ""
+    #     }
+    #     upload_video_from_json(data)
 
-        video.close()
-        # video.audio.close()
+    #     video.close()
+    #     # video.audio.close()
 
     def createRedditVideo(path: str, banner, data, redditPost):
         print(f"\033[35m Starting Vosk \033[0m")
@@ -333,7 +360,7 @@ class VideoGenerator:
         video = CompositeVideoClip(video)
 
         if (data['music']):
-            music = AudioFileClip(f"./assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)
+            music = AudioFileClip(f"{base_dir}/assets/music/{Music.getRandomMusic().name}").fx(afx.volumex, 0.2)
 
             while (music.duration < voiceover.duration + 1):
                 music = concatenate_audioclips([music, music])

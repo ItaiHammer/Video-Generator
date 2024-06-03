@@ -1,7 +1,7 @@
 import os
 import json
 import shutil
-from projectManager import outDir, createRedditVideo, createScriptedVideo
+from projectManager import createRedditVideo, createScriptedVideo, base_dir
 
 def read_json_file(file_path):
     with open(file_path, 'r') as file:
@@ -47,12 +47,13 @@ def run():
         createRedditVideo(name, data)
     elif command[0] == "scripts":
         print("\033[32m going over files \033[0m")
-        json_data = read_json_file("./scripts/scripts.json")
+        json_data = read_json_file("../scripts/scripts.json")
         
         createScriptedVideo(json_data)
 
 
 def dump():
+    outDir = f'{base_dir}/out/'
     for video in os.listdir(outDir):
         try:
             shutil.rmtree(f"{outDir}/{video}")

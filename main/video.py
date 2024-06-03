@@ -1,5 +1,6 @@
 import projectManager
 import os
+from projectManager import base_dir
 from audioEngine import SpeechSynthesizer
 from videoEngine import VideoGenerator, AssetManager
 

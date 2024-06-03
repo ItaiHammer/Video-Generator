@@ -1,18 +1,30 @@
-import sys
 import os
+import sys
+base_dir = os.path.dirname(os.path.dirname(__file__))
+# print(os.path.dirname(os.path.dirname(__file__)))
+sys.path.append(base_dir)
 from video import Video
 from scriptEngine import makeRedditScript
 import json
 
-outDir = './out/'
-assetsDir = './assets/'
-currentRunVideosProduced = 1
+outDir = f'{base_dir}/out/'
+assetsDir = f'{base_dir}/assets/'
+currentRunVideosProduced = 1 # check if this is actuallly neededeededededededede
 # create video
 def createRedditVideo(name, data):        
     redditPosts = makeRedditScript(data["subreddit"], data["videoCount"], data["chatGPT"])
     
     if not data["makeVideo"]: 
         # Serializing json
+        for i in range(len(redditPosts)):
+            try:
+                os.remove(f"{base_dir}/scripts/script{i}.txt")
+            except FileNotFoundError:
+                print("File is not present in the system.")
+            file = open(f"{base_dir}/scripts/script{i}.txt", 'a', encoding='utf-8')
+            file.write(redditPosts[i]["script"])
+            file.close()
+            redditPosts[i]["fileName"] = f"{base_dir}/scripts/script{i}.txt"
         dictionary = {
             "redditPosts": redditPosts,
             "data": data,
@@ -20,8 +32,8 @@ def createRedditVideo(name, data):
         }
         json_object = json.dumps(dictionary, indent=4)
         # Writing to sample.json
-        os.remove("./scripts/scripts.json")
-        with open("./scripts/scripts.json", "w") as outfile:
+        os.remove(f"{base_dir}/scripts/scripts.json")
+        with open(f"{base_dir}/scripts/scripts.json", "w") as outfile:
             outfile.write(json_object)
         return "json complete!"
     
@@ -32,6 +44,10 @@ def createScriptedVideo(json_data):
     redditPosts = json_data["redditPosts"]   
     name = json_data["name"]
     data = json_data["data"] 
+    for i in range(len(redditPosts)):
+        f = open(f"{base_dir}/scripts/script{i}.txt", "r")
+        fileScript = f.read()
+        redditPosts[i]["script"] = fileScript
     makeVideo(name, data, redditPosts)
     return "videos complete!"
 
