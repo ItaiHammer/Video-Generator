@@ -3,7 +3,7 @@ from projectManager import base_dir
 from random import randint, uniform
 from moviepy.editor import VideoFileClip, AudioFileClip, ImageClip, TextClip, CompositeVideoClip, CompositeAudioClip, concatenate_audioclips, ColorClip, vfx, afx, concatenate_videoclips
 from moviepy.video.fx.all import crop
-from main.uploadTik import upload_video_from_json
+from uploadTik import upload_video_from_json
 from audioEngine import Music
 from chatGPTassist import generateImagesForVideo
 from fixTranscript import fixTranscript
@@ -179,19 +179,6 @@ class AssetManager:
             else:
                 duration = betterTranscript[i+1]['start'] - word['start']
 
-            word['word'] = word['word'][0:1].upper() + word['word'][1:]
-            #        don't delete this line   
-            #                                                                                                          originally 4
-            fontSize = 60
-            length = len(word['word'])
-            if length > 25:
-                fontSize = 40
-            elif length > 20:
-                fontSize = 45
-            elif length > 15:
-                fontSize = 50
-            elif length > 10:
-                fontSize = 55
             # fix swear words...
             splited = word['word'].split(" ")
             newString = ""
@@ -205,17 +192,43 @@ class AssetManager:
                         # word['word'] = swearwords[key]# fix if it includes it changes everything, words like class to as*!!!!!!
             word['word'] = newString     
 
-            word['word'].replace('"', '')
-            word['word'].replace("'", '')
-            word['word'].replace(",", '')
-            word['word'].replace(".", '')
-            word['word'].replace("{", '')
-            word['word'].replace("}", '')
-            word['word'].replace("[", '')
-            word['word'].replace("]", '')
-            word['word'].replace(";", '')
-            word['word'].replace(":", '')
+            badDict = [
+                '"',
+                "'",
+                ",",
+                ".",
+                "{",
+                "}",
+                "[",
+                "]",
+                ";",
+                ":",
+                "‘",
+            ]
+            # trim the word
+            while word['word'][-1] == " ":
+                word['word'] = word['word'][:-1]
+            for str in badDict:
+                if word['word'][0] == str:
+                    print("0")
+                    word['word'] = word['word'][1:-1] 
+                if word['word'][-1] == str:
+                    print("1")
+                    word['word'] = word['word'][:-1] # this doesn't work
 
+            word['word'] = word['word'][0:1].upper() + word['word'][1:]
+
+            fontSize = 60
+            length = len(word['word'])
+            if length > 25:
+                fontSize = 40
+            elif length > 20:
+                fontSize = 45
+            elif length > 15:
+                fontSize = 50
+            elif length > 10:
+                fontSize = 55
+            #                                                                                                                                                originally 4
             textOutline = TextClip(word["word"], fontsize = fontSize, font="Calibri-Bold", bg_color='transparent', color = 'yellow', stroke_color="black", stroke_width=2).set_start(word['start']).set_pos(("center","center")).set_duration(duration)
             # text = TextClip(word["word"], fontsize = 60, font="Calibri-Bold", bg_color='transparent', color = 'yellow').set_start(word['start']).set_pos(("center","center")).set_duration(duration)
             # newText += word['word'] + " "

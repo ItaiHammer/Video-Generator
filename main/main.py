@@ -1,7 +1,7 @@
 import os
 import json
 import shutil
-from projectManager import createRedditVideo, createScriptedVideo, base_dir
+from projectManager import createRedditVideo, createScriptedVideo
 
 def read_json_file(file_path):
     with open(file_path, 'r') as file:
