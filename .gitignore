@@ -14,6 +14,7 @@ config/vosk-model/*
 # Ignores the big assets to improve upload and download speed
 assets/gameplay/*
 assets/music/*
+scripts/*
 
 # ignores program output
 out/*

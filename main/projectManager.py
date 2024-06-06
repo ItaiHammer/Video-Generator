@@ -45,8 +45,9 @@ def createScriptedVideo(json_data):
     name = json_data["name"]
     data = json_data["data"] 
     for i in range(len(redditPosts)):
-        f = open(f"{base_dir}/scripts/script{i}.txt", "r")
+        f = open(f"{base_dir}/scripts/script{i}.txt", "r", encoding='utf-8')
         fileScript = f.read()
+        f.close()
         redditPosts[i]["script"] = fileScript
     makeVideo(name, data, redditPosts)
     return "videos complete!"

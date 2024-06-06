@@ -133,7 +133,6 @@ class AssetManager:
         data, samplerate = soundfile.read(f"{path}/voiceover.wav")
         soundfile.write(f"{path}/voiceover.wav", data, samplerate)
 
-
         # Open WAV file
         wf = wave.open(f"{path}/voiceover.wav", "rb")
 
@@ -141,7 +140,8 @@ class AssetManager:
         model = Model(f"{base_dir}/config/vosk-model")
         rec = KaldiRecognizer(model, wf.getframerate())
         rec.SetWords(True)
-
+        global transcript
+        transcript = []
         while True:
             data = wf.readframes(4000)
             if len(data) == 0:
@@ -194,7 +194,7 @@ class AssetManager:
 
             badDict = [
                 '"',
-                "'",
+                # "'",
                 ",",
                 ".",
                 "{",
@@ -202,7 +202,7 @@ class AssetManager:
                 "[",
                 "]",
                 ";",
-                ":",
+                # ":",
                 "‘",
             ]
             # trim the word
@@ -210,10 +210,8 @@ class AssetManager:
                 word['word'] = word['word'][:-1]
             for str in badDict:
                 if word['word'][0] == str:
-                    print("0")
                     word['word'] = word['word'][1:-1] 
                 if word['word'][-1] == str:
-                    print("1")
                     word['word'] = word['word'][:-1] # this doesn't work
 
             word['word'] = word['word'][0:1].upper() + word['word'][1:]
@@ -397,27 +395,26 @@ class VideoGenerator:
                 y1, y2 = 0, h
                 video = crop(video, x1=x1, y1=y1, x2=x2, y2=y2)
         
-        if data['makeVideo']:
-            print(f"\033[32m Ending: Writing Video File \033[0m")
-            video.write_videofile(f"{path}/video.mp4", threads=8,preset="ultrafast")
-            print(f"\033[34m Done with Video, now uploading! \033[0m")
+        print(f"\033[32m Ending: Writing Video File \033[0m")
+        video.write_videofile(f"{path}/video.mp4", threads=8,preset="ultrafast")
+        print(f"\033[34m Done with Video, now uploading! \033[0m")
 
-            # upload video
-            if data["upload"]:
-                data = {
-                    "video_path": f"{path}/video.mp4",
-                    "title": redditPost["tags"],
-                    "schedule_time": 0,
-                    "comment": 1,
-                    "duet": 0,
-                    "stitch": 0,
-                    "visibility": 0,
-                    "brandorganic": 0,
-                    "brandcontent": 0,
-                    "ailabel": 0,
-                    "proxy": ""
-                }
-                upload_video_from_json(data)
+        # upload video
+        if data["upload"]:
+            data = {
+                "video_path": f"{path}/video.mp4",
+                "title": redditPost["tags"],
+                "schedule_time": 0,
+                "comment": 1,
+                "duet": 0,
+                "stitch": 0,
+                "visibility": 0,
+                "brandorganic": 0,
+                "brandcontent": 0,
+                "ailabel": 0,
+                "proxy": ""
+            }
+            upload_video_from_json(data)
 
-            video.close()
-            # video.audio.close()
+        video.close()
+        # video.audio.close()

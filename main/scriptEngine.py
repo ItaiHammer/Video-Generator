@@ -114,6 +114,7 @@ def makeRedditScript(subredditName, numPostsWanted, isChatGPT):
             break
 
         post = random.choice(sorted_posts)
+        # Notice Here how we always put the title before the text!!!
         newScript = f"{post.title}. {post.selftext}."
         print(f"\n\n \033[31m printing the Script Before ChatGPT for video: {i+1} \033[0m")
         print(newScript)

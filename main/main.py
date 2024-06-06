@@ -47,13 +47,13 @@ def run():
         createRedditVideo(name, data)
     elif command[0] == "scripts":
         print("\033[32m going over files \033[0m")
-        json_data = read_json_file("../scripts/scripts.json")
+        json_data = read_json_file(f"{os.path.dirname(os.path.dirname(__file__))}/scripts/scripts.json")
         
         createScriptedVideo(json_data)
 
 
 def dump():
-    outDir = f'{base_dir}/out/'
+    outDir = f'{os.path.dirname(os.path.dirname(__file__))}/out/'
     for video in os.listdir(outDir):
         try:
             shutil.rmtree(f"{outDir}/{video}")
